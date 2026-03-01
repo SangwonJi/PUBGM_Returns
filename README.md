@@ -1,30 +1,79 @@
-# DAU Heatmap Viewer
+<div align="center">
 
-A fully client-side DAU (Daily Active Users) heatmap viewer — no server, no data upload, runs entirely in your browser.
+# 📊 DAU Heatmap Viewer
 
-## Features
+**A fully client-side Daily Active Users heatmap — no server, no data stored, runs entirely in your browser.**
 
-- **4 views**: Monthly · Quarterly · Weekly · Daily (calendar heatmap)
-- **Country filter** and top-N selection
-- **Global / Per-country scale** toggle
-- **Auto-detects** CSV encoding (UTF-16, UTF-8) and delimiter (tab, comma)
-- Supports date formats: `YYYY. M. D.` · `YYYY-MM-DD` · `MM/DD/YYYY`
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-brightgreen?logo=github)](https://SangwonJi.github.io/PUBGM_Returns/)
+[![License](https://img.shields.io/badge/License-MIT-blue)](#)
+[![No Server](https://img.shields.io/badge/Server-None-lightgrey)](#)
+[![Language](https://img.shields.io/badge/Lang-EN%20%2F%20한-orange)](#)
 
-## CSV Format
+</div>
 
-| column  | description             |
-|---------|-------------------------|
-| date    | Date of record          |
-| country | Country name            |
-| DAU     | Daily Active Users count|
+---
 
-## GitHub Pages Setup
+## ✨ Features
 
-1. Push this repo to GitHub
-2. Go to **Settings → Pages**
-3. Source: **Deploy from branch** → `main` → `/ (root)`
-4. Your site: `https://<username>.github.io/<repo-name>/`
+| | Feature |
+|---|---|
+| 🗓️ | **4 time views** — Daily · Weekly · Monthly · Quarterly |
+| 🌍 | **Country filter** — Global aggregate or per-country breakdown |
+| 🎨 | **2 color modes** — % Change (green/red) or Absolute DAU intensity |
+| 🇰🇷 🇺🇸 | **Bilingual UI** — Toggle between Korean / English |
+| 📐 | **CoinGlass-style layout** — Rows = Years, Cols = Periods, Average + Median rows |
+| ⚡ | **Fast parsing** — Chunked processing for large CSVs (600K+ rows) |
+| 🔐 | **Privacy-first** — All data stays in your browser, zero uploads |
 
-## Security
+---
 
-All data stays in your browser. Nothing is sent to any server.
+## 📁 CSV Format
+
+```
+date          country    DAU
+2024. 1. 1.   KR         1500000
+2024. 1. 1.   US         3200000
+```
+
+| Column | Description | Supported Formats |
+|--------|-------------|-------------------|
+| `date` | Date of record | `YYYY. M. D.` · `YYYY-MM-DD` · `MM/DD/YYYY` |
+| `country` | Country name or code | Any string |
+| `DAU` | Daily Active Users | Integer |
+
+> Auto-detects encoding (**UTF-16 LE/BE**, **UTF-8**) and delimiter (**tab**, **comma**)
+
+---
+
+## 🚀 GitHub Pages Setup
+
+```bash
+# 1. Clone or push this repo to GitHub
+git push origin main
+
+# 2. Enable GitHub Pages
+# Settings → Pages → Branch: main / (root) → Save
+
+# 3. Access your live site
+# https://<username>.github.io/<repo-name>/
+```
+
+---
+
+## 🔒 Privacy & Security
+
+```
+Your CSV data never leaves your device.
+No analytics. No cookies. No server.
+```
+
+All processing happens in-browser via JavaScript — the file is read into memory,
+rendered as a heatmap, and discarded when you close the tab.
+
+---
+
+<div align="center">
+
+Made with ♥ for PUBGM Analytics
+
+</div>

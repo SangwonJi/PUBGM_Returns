@@ -8,117 +8,70 @@
     *{margin:0;padding:0;box-sizing:border-box;}
     body{background:#0f1015;color:#fff;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
 
-    /* ── HEADER ── */
-    .header{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:16px 28px 12px;border-bottom:1px solid #1e1e2a;
-    }
-    .header h1{font-size:1.15rem;font-weight:700;color:#fff;}
-    .header .badge{
-      font-size:0.68rem;font-weight:700;color:#3b82f6;
-      border:1px solid #1d4ed8;border-radius:20px;padding:2px 9px;
-    }
+    .header{display:flex;align-items:center;justify-content:space-between;padding:16px 28px 12px;border-bottom:1px solid #1e1e2a;}
+    .header h1{font-size:1.15rem;font-weight:700;}
+    .header .badge{font-size:0.68rem;font-weight:700;color:#4ade80;border:1px solid #166534;border-radius:20px;padding:2px 9px;}
 
-    /* ── UPLOAD ── */
-    #upload-zone{
-      display:flex;flex-direction:column;align-items:center;
-      justify-content:center;min-height:calc(100vh - 57px);gap:14px;padding:40px;
-    }
-    .drop-box{
-      border:2px dashed #2a2a38;border-radius:14px;
-      padding:44px 60px;text-align:center;cursor:pointer;
-      transition:all .2s;max-width:480px;width:100%;
-    }
-    .drop-box:hover,.drop-box.over{border-color:#3b82f6;background:rgba(59,130,246,.05);}
+    /* UPLOAD */
+    #upload-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 57px);gap:14px;padding:40px;}
+    .drop-box{border:2px dashed #2a2a38;border-radius:14px;padding:44px 60px;text-align:center;cursor:pointer;transition:all .2s;max-width:480px;width:100%;}
+    .drop-box:hover,.drop-box.over{border-color:#4ade80;background:rgba(74,222,128,.04);}
     .drop-icon{font-size:2.8rem;margin-bottom:10px;opacity:.45;}
     .drop-box h2{font-size:1rem;font-weight:600;margin-bottom:6px;}
     .drop-box p{font-size:0.78rem;color:#666;line-height:1.6;}
-    .drop-box code{
-      display:inline-block;margin-top:12px;padding:3px 10px;
-      background:#1a1a24;border:1px solid #2a2a38;
-      border-radius:5px;font-size:0.72rem;color:#888;
-    }
+    .drop-box code{display:inline-block;margin-top:12px;padding:3px 10px;background:#1a1a24;border:1px solid #2a2a38;border-radius:5px;font-size:0.72rem;color:#888;}
     #file-input{display:none;}
-    .btn-primary{
-      margin-top:12px;padding:9px 26px;border:none;border-radius:8px;
-      background:#3b82f6;color:#fff;font-size:0.83rem;font-weight:600;
-      cursor:pointer;transition:opacity .15s;
-    }
+    .btn-primary{margin-top:12px;padding:9px 26px;border:none;border-radius:8px;background:#166534;color:#fff;font-size:0.83rem;font-weight:600;cursor:pointer;transition:opacity .15s;}
     .btn-primary:hover{opacity:.85;}
     .hint-txt{font-size:0.7rem;color:#444;}
 
-    /* ── PROGRESS ── */
-    #progress-zone{
-      display:none;flex-direction:column;align-items:center;
-      justify-content:center;min-height:calc(100vh - 57px);gap:18px;
-    }
+    /* PROGRESS */
+    #progress-zone{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 57px);gap:18px;}
     .prog-bar-wrap{width:300px;background:#1a1a24;border-radius:8px;height:5px;overflow:hidden;}
-    .prog-bar{height:100%;background:#3b82f6;border-radius:8px;width:0%;transition:width .08s;}
+    .prog-bar{height:100%;background:#4ade80;border-radius:8px;width:0%;transition:width .08s;}
     .prog-label{font-size:0.82rem;color:#888;}
 
-    /* ── DASHBOARD ── */
+    /* DASHBOARD */
     #dashboard{display:none;padding:20px 28px 48px;}
 
-    /* stats */
     .stats-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
     .stat{background:#111118;border:1px solid #1e1e2a;border-radius:10px;padding:11px 16px;min-width:110px;}
     .stat .sl{font-size:0.65rem;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}
-    .stat .sv{font-size:1rem;font-weight:700;color:#fff;}
+    .stat .sv{font-size:1rem;font-weight:700;}
 
-    /* controls */
     .ctrl-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
     .ctrl-label{font-size:0.75rem;color:#666;}
-    select{
-      background:#111118;border:1px solid #1e1e2a;color:#fff;
-      border-radius:6px;padding:5px 10px;font-size:0.8rem;cursor:pointer;
-    }
-    select:focus{outline:none;border-color:#3b82f6;}
+    select{background:#111118;border:1px solid #1e1e2a;color:#fff;border-radius:6px;padding:5px 10px;font-size:0.8rem;cursor:pointer;}
+    select:focus{outline:none;}
 
-    /* tabs */
-    .tab-bar{
-      display:flex;gap:0;border-bottom:1px solid #1e1e2a;
-      margin-bottom:20px;
-    }
-    .tab-btn{
-      padding:8px 20px;border:none;background:transparent;
-      color:#666;font-size:0.83rem;font-weight:600;cursor:pointer;
-      border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;
-    }
+    /* mode toggle */
+    .mode-wrap{display:flex;gap:0;border:1px solid #1e1e2a;border-radius:7px;overflow:hidden;}
+    .mode-btn{padding:5px 16px;font-size:0.75rem;font-weight:600;background:transparent;border:none;color:#555;cursor:pointer;transition:all .15s;}
+    .mode-btn.active{background:#1a1a24;color:#fff;}
+
+    /* TABS */
+    .tab-bar{display:flex;gap:0;border-bottom:1px solid #1e1e2a;margin-bottom:20px;}
+    .tab-btn{padding:8px 20px;border:none;background:transparent;color:#666;font-size:0.83rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
     .tab-btn:hover{color:#aaa;}
-    .tab-btn.active{color:#fff;border-bottom-color:#3b82f6;}
+    .tab-btn.active{color:#fff;border-bottom-color:#4ade80;}
     .tab-panel{display:none;}
     .tab-panel.active{display:block;}
 
-    /* ── TABLE ── */
+    /* TABLE */
     .tbl-wrap{overflow-x:auto;padding-bottom:8px;}
     table{border-collapse:collapse;white-space:nowrap;}
-    table th{
-      font-size:0.72rem;font-weight:600;color:#888;
-      padding:6px 10px;text-align:center;
-      border-bottom:1px solid #1e1e2a;border-right:1px solid #1e1e2a;
-      background:#0f1015;position:sticky;top:0;z-index:2;
-    }
+    table th{font-size:0.72rem;font-weight:600;color:#888;padding:6px 10px;text-align:center;border-bottom:1px solid #1e1e2a;border-right:1px solid #1e1e2a;background:#0f1015;position:sticky;top:0;z-index:2;}
     table th.th-time{text-align:left;min-width:60px;}
-    table td{
-      text-align:center;padding:8px 10px;
-      font-size:0.8rem;font-weight:600;color:#fff;
-      border-bottom:1px solid #0f1015;border-right:1px solid #0f1015;
-      transition:filter .1s;cursor:default;min-width:90px;
-    }
+    table td{text-align:center;padding:8px 10px;font-size:0.8rem;font-weight:600;color:#fff;border-bottom:1px solid #0f1015;border-right:1px solid #0f1015;transition:filter .1s;cursor:default;min-width:90px;}
     table td:hover{filter:brightness(1.2);}
-    table td.td-year{
-      text-align:left;background:#0f1015!important;color:#888;
-      font-size:0.78rem;font-weight:500;
-      border-right:1px solid #1e1e2a;position:sticky;left:0;z-index:1;
-    }
+    table td.td-year{text-align:left;background:#0f1015!important;color:#888;font-size:0.78rem;font-weight:500;border-right:1px solid #1e1e2a;position:sticky;left:0;z-index:1;}
     table td.td-empty{background:#111118!important;color:transparent!important;}
 
-    /* ── CALENDAR (daily) ── */
+    /* CALENDAR */
     .cal-outer{overflow-x:auto;padding-bottom:8px;}
     .cal-container{display:inline-flex;gap:4px;align-items:flex-start;}
     .cal-dow-col{display:flex;flex-direction:column;gap:3px;margin-top:22px;margin-right:4px;}
     .cal-dw{font-size:0.6rem;color:#444;height:14px;line-height:14px;width:14px;text-align:center;}
-    .cal-months{display:flex;flex-direction:column;}
     .cal-month-row{display:flex;gap:3px;margin-bottom:4px;min-height:18px;}
     .cal-ml{font-size:0.65rem;color:#888;width:14px;text-align:left;overflow:visible;white-space:nowrap;}
     .cal-weeks-row{display:flex;gap:3px;}
@@ -126,21 +79,17 @@
     .cal-cell{width:14px;height:14px;border-radius:2px;cursor:default;flex-shrink:0;transition:filter .1s;}
     .cal-cell:hover{filter:brightness(1.3);}
 
-    /* ── LEGEND ── */
-    .legend{display:flex;align-items:center;gap:8px;margin-top:16px;}
+    /* LEGEND */
+    .legend{display:flex;align-items:center;gap:8px;margin-top:14px;}
     .legend-lbl{font-size:0.7rem;color:#666;}
-    .legend-bar{display:flex;height:10px;width:150px;border-radius:4px;overflow:hidden;}
+    .legend-bar{display:flex;height:10px;width:180px;border-radius:4px;overflow:hidden;}
     .legend-seg{flex:1;}
 
-    /* ── TOOLTIP ── */
-    #tooltip{
-      display:none;position:fixed;z-index:9999;
-      background:#1a1a24;border:1px solid #2a2a38;border-radius:8px;
-      padding:8px 12px;pointer-events:none;
-      box-shadow:0 4px 20px rgba(0,0,0,.6);white-space:nowrap;
-    }
-    #tt-lbl{font-size:0.68rem;color:#888;margin-bottom:3px;}
-    #tt-val{font-size:0.95rem;font-weight:700;color:#60a5fa;}
+    /* TOOLTIP */
+    #tooltip{display:none;position:fixed;z-index:9999;background:#1a1a24;border:1px solid #2a2a38;border-radius:8px;padding:9px 13px;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.6);white-space:nowrap;}
+    #tt-lbl{font-size:0.68rem;color:#888;margin-bottom:2px;}
+    #tt-val{font-size:0.95rem;font-weight:700;}
+    #tt-sub{font-size:0.72rem;color:#666;margin-top:2px;}
 
     ::-webkit-scrollbar{height:5px;width:5px;}
     ::-webkit-scrollbar-track{background:#0f1015;}
@@ -150,11 +99,10 @@
 <body>
 
 <div class="header">
-  <h1 id="page-title">DAU Heatmap</h1>
+  <h1>DAU Heatmap</h1>
   <span class="badge">Client-side · No upload</span>
 </div>
 
-<!-- UPLOAD -->
 <div id="upload-zone">
   <div class="drop-box" id="drop-box">
     <div class="drop-icon">📊</div>
@@ -167,15 +115,12 @@
   <p class="hint-txt">Date formats: YYYY. M. D. &nbsp;|&nbsp; YYYY-MM-DD &nbsp;|&nbsp; MM/DD/YYYY</p>
 </div>
 
-<!-- PROGRESS -->
 <div id="progress-zone">
   <div class="prog-label" id="prog-label">Reading…</div>
   <div class="prog-bar-wrap"><div class="prog-bar" id="prog-bar"></div></div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard">
-
   <div class="stats-row">
     <div class="stat"><div class="sl">Countries</div><div class="sv" id="s-countries">—</div></div>
     <div class="stat"><div class="sl">Date Range</div><div class="sv" id="s-range">—</div></div>
@@ -183,20 +128,23 @@
     <div class="stat"><div class="sl">Peak Daily DAU</div><div class="sv" id="s-peak">—</div></div>
   </div>
 
-  <!-- Country filter -->
   <div class="ctrl-bar">
     <span class="ctrl-label">View</span>
     <select id="sel-country">
       <option value="__global__">🌐 Global (All Countries)</option>
     </select>
+    <span class="ctrl-label" style="margin-left:8px">Mode</span>
+    <div class="mode-wrap">
+      <button class="mode-btn active" data-mode="change">% Change MoM</button>
+      <button class="mode-btn" data-mode="abs">Absolute DAU</button>
+    </div>
   </div>
 
-  <!-- Tabs -->
   <div class="tab-bar">
-    <button class="tab-btn active" data-tab="monthly">Monthly DAU</button>
-    <button class="tab-btn" data-tab="quarterly">Quarterly DAU</button>
-    <button class="tab-btn" data-tab="weekly">Weekly DAU</button>
-    <button class="tab-btn" data-tab="daily">Daily DAU</button>
+    <button class="tab-btn active" data-tab="monthly">Monthly</button>
+    <button class="tab-btn" data-tab="quarterly">Quarterly</button>
+    <button class="tab-btn" data-tab="weekly">Weekly</button>
+    <button class="tab-btn" data-tab="daily">Daily</button>
   </div>
 
   <div class="tab-panel active" id="tab-monthly">
@@ -222,202 +170,172 @@
     </div>
     <div class="cal-outer" id="cal-outer"></div>
     <div class="legend" id="leg-daily"></div>
-    <p style="font-size:.68rem;color:#444;margin-top:10px;">Each cell = one day</p>
+    <p style="font-size:.68rem;color:#444;margin-top:10px;">Each cell = 1 day · Color = DoD % change</p>
   </div>
 </div>
 
-<div id="tooltip"><div id="tt-lbl"></div><div id="tt-val"></div></div>
+<div id="tooltip">
+  <div id="tt-lbl"></div>
+  <div id="tt-val"></div>
+  <div id="tt-sub"></div>
+</div>
 
 <script>
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 const G = {
-  // global aggregates: { 'YYYY-MM': dau, ... }
-  gMonthly: {}, gQuarterly: {}, gWeekly: {}, gDaily: {},
-  // per-country: { country: { 'YYYY-MM': dau, ... } }
-  cMonthly: {}, cQuarterly: {}, cWeekly: {}, cDaily: {},
-  countries: [], years: [], allMonths: [], allQuarters: [],
-  peakGlobal: 0, peakDaily: 0,
+  gMonthly:{}, gQuarterly:{}, gWeekly:{}, gDaily:{},
+  cMonthly:{}, cQuarterly:{}, cWeekly:{}, cDaily:{},
+  countries:[], years:[], allMonths:[], allQuarters:[],
+  peakDaily:0, mode:'change',
 };
 
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // UPLOAD
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 const dropBox = document.getElementById('drop-box');
 document.getElementById('file-input').addEventListener('change', e => handleFile(e.target.files[0]));
-dropBox.addEventListener('dragover', e => { e.preventDefault(); dropBox.classList.add('over'); });
-dropBox.addEventListener('dragleave', () => dropBox.classList.remove('over'));
-dropBox.addEventListener('drop', e => { e.preventDefault(); dropBox.classList.remove('over'); handleFile(e.dataTransfer.files[0]); });
+dropBox.addEventListener('dragover', e=>{e.preventDefault();dropBox.classList.add('over');});
+dropBox.addEventListener('dragleave', ()=>dropBox.classList.remove('over'));
+dropBox.addEventListener('drop', e=>{e.preventDefault();dropBox.classList.remove('over');handleFile(e.dataTransfer.files[0]);});
 
-function handleFile(file) {
-  if (!file) return;
-  setProgress('Reading file…', 2);
-  const reader = new FileReader();
-  reader.onload = e => parseCSV(e.target.result, file.name);
-  reader.readAsArrayBuffer(file);
+function handleFile(file){
+  if(!file) return;
+  setProgress('Reading file…',2);
+  const r=new FileReader();
+  r.onload=e=>parseCSV(e.target.result,file.name);
+  r.readAsArrayBuffer(file);
+}
+function setProgress(msg,pct){
+  document.getElementById('upload-zone').style.display='none';
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('progress-zone').style.display='flex';
+  document.getElementById('prog-label').textContent=msg;
+  document.getElementById('prog-bar').style.width=pct+'%';
 }
 
-function setProgress(msg, pct) {
-  document.getElementById('upload-zone').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('progress-zone').style.display = 'flex';
-  document.getElementById('prog-label').textContent = msg;
-  document.getElementById('prog-bar').style.width = pct + '%';
-}
-
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // PARSE
-// ═══════════════════════════════════════════════════
-function parseDate(s) {
-  s = s.trim();
-  let m = s.match(/^(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})\.?$/);
-  if (m) return [+m[1], +m[2], +m[3]];
-  m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (m) return [+m[1], +m[2], +m[3]];
-  m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (m) return [+m[3], +m[1], +m[2]];
+// ══════════════════════════════════════════════════
+function parseDate(s){
+  s=s.trim();
+  let m=s.match(/^(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})\.?$/);
+  if(m) return[+m[1],+m[2],+m[3]];
+  m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(m) return[+m[1],+m[2],+m[3]];
+  m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m) return[+m[3],+m[1],+m[2]];
   return null;
 }
-
-function weekNum(y, mo, d) {
-  const dt = new Date(y, mo - 1, d);
-  const jan1 = new Date(y, 0, 1);
-  return Math.ceil(((dt - jan1) / 86400000 + jan1.getDay() + 1) / 7);
+function weekNum(y,mo,d){
+  const dt=new Date(y,mo-1,d),j1=new Date(y,0,1);
+  return Math.ceil(((dt-j1)/86400000+j1.getDay()+1)/7);
 }
 
-function parseCSV(buffer, filename) {
-  setProgress('Decoding…', 8);
-  const u8 = new Uint8Array(buffer);
+function parseCSV(buffer, filename){
+  setProgress('Decoding…',8);
+  const u8=new Uint8Array(buffer);
   let text;
-  if (u8[0] === 0xFF && u8[1] === 0xFE) text = new TextDecoder('utf-16le').decode(buffer);
-  else if (u8[0] === 0xFE && u8[1] === 0xFF) text = new TextDecoder('utf-16be').decode(buffer);
-  else text = new TextDecoder('utf-8').decode(buffer);
+  if(u8[0]===0xFF&&u8[1]===0xFE) text=new TextDecoder('utf-16le').decode(buffer);
+  else if(u8[0]===0xFE&&u8[1]===0xFF) text=new TextDecoder('utf-16be').decode(buffer);
+  else text=new TextDecoder('utf-8').decode(buffer);
 
-  const lines = text.split('\n');
-  const total = lines.length;
-  const firstLine = lines[0] || '';
-  const delim = firstLine.includes('\t') ? '\t' : ',';
+  const lines=text.split('\n'), total=lines.length;
+  const delim=lines[0].includes('\t')?'\t':',';
+  const header=lines[0].trim().split(delim).map(h=>h.trim().toLowerCase().replace(/\uFEFF/g,''));
+  let di=header.indexOf('date'),ci=header.indexOf('country'),vi=header.indexOf('dau');
+  if(di<0)di=0; if(ci<0)ci=1; if(vi<0)vi=2;
 
-  const header = lines[0].trim().split(delim).map(h => h.trim().toLowerCase().replace(/\uFEFF/g,''));
-  let di = header.findIndex(h => h==='date') ?? 0;
-  let ci = header.findIndex(h => h==='country') ?? 1;
-  let vi = header.findIndex(h => h==='dau') ?? 2;
-  if (di < 0) di = 0; if (ci < 0) ci = 1; if (vi < 0) vi = 2;
+  const CHUNK=60000; let i=1,parsed=0,peakDaily=0;
+  const gM={},gQ={},gW={},gD={},cM={},cQ={},cW={},cD={};
+  const countrySet=new Set(),yearSet=new Set(),moSet=new Set(),qSet=new Set();
 
-  const CHUNK = 60000;
-  let i = 1, parsed = 0, peakDaily = 0, peakGlobal = 0;
-  const gM={}, gQ={}, gW={}, gD={};
-  const cM={}, cQ={}, cW={}, cD={};
-  const countrySet = new Set(), yearSet = new Set(), moSet = new Set(), qSet = new Set();
+  function inc(o,k,v){o[k]=(o[k]||0)+v;}
+  function incC(o,c,k,v){if(!o[c])o[c]={};o[c][k]=(o[c][k]||0)+v;}
 
-  function inc(obj, key, val) { obj[key] = (obj[key] || 0) + val; }
-  function incC(obj, country, key, val) {
-    if (!obj[country]) obj[country] = {};
-    obj[country][key] = (obj[country][key] || 0) + val;
-  }
-
-  function processChunk() {
-    const end = Math.min(i + CHUNK, total);
-    for (; i < end; i++) {
-      const line = lines[i];
-      if (!line || !line.trim()) continue;
-      const parts = line.split(delim);
-      if (parts.length < 3) continue;
-      const dt = parseDate(parts[di]);
-      if (!dt) continue;
-      const country = (parts[ci] || '').trim();
-      if (!country) continue;
-      const dau = parseInt((parts[vi] || '').trim(), 10);
-      if (isNaN(dau) || dau < 0) continue;
+  function processChunk(){
+    const end=Math.min(i+CHUNK,total);
+    for(;i<end;i++){
+      const line=lines[i]; if(!line||!line.trim()) continue;
+      const p=line.split(delim); if(p.length<3) continue;
+      const dt=parseDate(p[di]); if(!dt) continue;
+      const country=(p[ci]||'').trim(); if(!country) continue;
+      const dau=parseInt((p[vi]||'').trim(),10);
+      if(isNaN(dau)||dau<0) continue;
 
       parsed++;
-      if (dau > peakDaily) peakDaily = dau;
+      if(dau>peakDaily) peakDaily=dau;
+      const[y,mo,d]=dt;
+      const mo2=String(mo).padStart(2,'0'),d2=String(d).padStart(2,'0');
+      const mkey=`${y}-${mo2}`,qkey=`${y}-Q${Math.ceil(mo/3)}`;
+      const wkey=`${y}-W${String(weekNum(y,mo,d)).padStart(2,'0')}`,dkey=`${y}-${mo2}-${d2}`;
 
-      const [y, mo, d] = dt;
-      const mo2 = String(mo).padStart(2,'0');
-      const d2  = String(d).padStart(2,'0');
-      const mkey = `${y}-${mo2}`;
-      const qkey = `${y}-Q${Math.ceil(mo/3)}`;
-      const wkey = `${y}-W${String(weekNum(y,mo,d)).padStart(2,'0')}`;
-      const dkey = `${y}-${mo2}-${d2}`;
-
-      countrySet.add(country);
-      yearSet.add(y);
-      moSet.add(mkey);
-      qSet.add(qkey);
-
-      // Global aggregates
-      inc(gM, mkey, dau); inc(gQ, qkey, dau);
-      inc(gW, wkey, dau); inc(gD, dkey, dau);
-
-      // Per-country
-      incC(cM, country, mkey, dau); incC(cQ, country, qkey, dau);
-      incC(cW, country, wkey, dau); incC(cD, country, dkey, dau);
+      countrySet.add(country); yearSet.add(y); moSet.add(mkey); qSet.add(qkey);
+      inc(gM,mkey,dau); inc(gQ,qkey,dau); inc(gW,wkey,dau); inc(gD,dkey,dau);
+      incC(cM,country,mkey,dau); incC(cQ,country,qkey,dau);
+      incC(cW,country,wkey,dau); incC(cD,country,dkey,dau);
     }
-
-    const pct = 8 + Math.round((i / total) * 75);
-    setProgress(`Parsing… ${Math.round(i/total*100)}%`, pct);
-
-    if (i < total) { setTimeout(processChunk, 0); }
-    else {
-      peakGlobal = Math.max(...Object.values(gM));
-      finalize(gM,gQ,gW,gD,cM,cQ,cW,cD,countrySet,yearSet,moSet,qSet,peakGlobal,peakDaily,parsed,filename);
-    }
+    setProgress(`Parsing… ${Math.round(i/total*100)}%`, 8+Math.round((i/total)*75));
+    if(i<total){ setTimeout(processChunk,0); }
+    else finalize(gM,gQ,gW,gD,cM,cQ,cW,cD,countrySet,yearSet,moSet,qSet,peakDaily,parsed);
   }
-
-  setTimeout(processChunk, 20);
+  setTimeout(processChunk,20);
 }
 
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // FINALIZE
-// ═══════════════════════════════════════════════════
-function finalize(gM,gQ,gW,gD,cM,cQ,cW,cD,countrySet,yearSet,moSet,qSet,peakGlobal,peakDaily,parsed,filename) {
-  setProgress('Rendering…', 90);
+// ══════════════════════════════════════════════════
+function finalize(gM,gQ,gW,gD,cM,cQ,cW,cD,countrySet,yearSet,moSet,qSet,peakDaily,parsed){
+  setProgress('Rendering…',90);
+  Object.assign(G,{gMonthly:gM,gQuarterly:gQ,gWeekly:gW,gDaily:gD,
+                   cMonthly:cM,cQuarterly:cQ,cWeekly:cW,cDaily:cD,peakDaily});
 
-  G.gMonthly=gM; G.gQuarterly=gQ; G.gWeekly=gW; G.gDaily=gD;
-  G.cMonthly=cM; G.cQuarterly=cQ; G.cWeekly=cW; G.cDaily=cD;
-  G.peakGlobal=peakGlobal; G.peakDaily=peakDaily;
-
-  // Sort keys
-  G.allMonths    = [...moSet].sort();
-  G.allQuarters  = [...qSet].sort();
-  G.years        = [...yearSet].sort((a,b)=>b-a); // newest first
-  G.countries    = [...countrySet].sort((a,b) => {
-    const totA = Object.values(cM[a]||{}).reduce((s,v)=>s+v,0);
-    const totB = Object.values(cM[b]||{}).reduce((s,v)=>s+v,0);
-    return totB - totA;
+  G.allMonths   =[...moSet].sort();
+  G.allQuarters =[...qSet].sort();
+  G.years       =[...yearSet].sort((a,b)=>b-a);
+  G.countries   =[...countrySet].sort((a,b)=>{
+    const tA=Object.values(cM[a]||{}).reduce((s,v)=>s+v,0);
+    const tB=Object.values(cM[b]||{}).reduce((s,v)=>s+v,0);
+    return tB-tA;
   });
 
-  // Stats
-  const allYearsSorted = [...yearSet].sort();
-  document.getElementById('s-countries').textContent = G.countries.length;
-  document.getElementById('s-range').textContent = `${allYearsSorted[0]} – ${allYearsSorted[allYearsSorted.length-1]}`;
-  document.getElementById('s-records').textContent = parsed.toLocaleString();
-  document.getElementById('s-peak').textContent = fmtNum(peakDaily);
+  const ySorted=[...yearSet].sort();
+  document.getElementById('s-countries').textContent=G.countries.length;
+  document.getElementById('s-range').textContent=`${ySorted[0]} – ${ySorted[ySorted.length-1]}`;
+  document.getElementById('s-records').textContent=parsed.toLocaleString();
+  document.getElementById('s-peak').textContent=fmtNum(peakDaily);
 
   // Country selector
-  const sel = document.getElementById('sel-country');
-  G.countries.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c; opt.textContent = c;
-    sel.appendChild(opt);
+  const sel=document.getElementById('sel-country');
+  G.countries.forEach(c=>{
+    const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o);
   });
-  sel.addEventListener('change', () => renderAll());
+  sel.addEventListener('change',renderAll);
 
-  // Year selects
-  const weekYearSel = document.getElementById('sel-week-year');
-  const calYearSel  = document.getElementById('sel-cal-year');
-  G.years.forEach(y => {
-    weekYearSel.innerHTML += `<option value="${y}">${y}</option>`;
-    calYearSel.innerHTML  += `<option value="${y}">${y}</option>`;
+  // Mode toggle
+  document.querySelectorAll('.mode-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      G.mode=btn.dataset.mode;
+      renderAll();
+    });
   });
-  weekYearSel.addEventListener('change', renderWeekly);
-  calYearSel.addEventListener('change',  renderCalendar);
+
+  // Year selectors
+  const wySel=document.getElementById('sel-week-year');
+  const cySel=document.getElementById('sel-cal-year');
+  G.years.forEach(y=>{
+    wySel.innerHTML+=`<option value="${y}">${y}</option>`;
+    cySel.innerHTML+=`<option value="${y}">${y}</option>`;
+  });
+  wySel.addEventListener('change',renderWeekly);
+  cySel.addEventListener('change',renderCalendar);
 
   // Tabs
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
       document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
       document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
       btn.classList.add('active');
@@ -426,310 +344,305 @@ function finalize(gM,gQ,gW,gD,cM,cQ,cW,cD,countrySet,yearSet,moSet,qSet,peakGlob
   });
 
   renderAll();
-  setTimeout(() => {
-    document.getElementById('progress-zone').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-  }, 100);
+  setTimeout(()=>{
+    document.getElementById('progress-zone').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+  },100);
 }
 
-// ═══════════════════════════════════════════════════
-// COLOR  (blue gradient for DAU)
-// ═══════════════════════════════════════════════════
-function dauColor(val, maxVal) {
-  if (!val || !maxVal) return '#111118';
-  const t = Math.min(val / maxVal, 1);
-  // dark navy → bright cyan
-  const r = Math.round(10  + t * 30);
-  const g = Math.round(30  + t * 140);
-  const b = Math.round(80  + t * 175);
-  return `rgb(${r},${g},${b})`;
+// ══════════════════════════════════════════════════
+// COLOR  ── green(+) / red(-)
+// ══════════════════════════════════════════════════
+function changeColor(val){
+  if(val===null||val===undefined||isNaN(val)) return '#111118';
+  const t=Math.min(Math.abs(val)/40,1);
+  const s=Math.round(38+t*57), l=Math.round(15+t*25);
+  return val>=0 ? `hsl(142,${s}%,${l}%)` : `hsl(0,${s}%,${l}%)`;
+}
+function absColor(val, maxVal){
+  if(!val||!maxVal) return '#111118';
+  const t=Math.min(val/maxVal,1);
+  const s=Math.round(38+t*57), l=Math.round(15+t*25);
+  return `hsl(142,${s}%,${l}%)`; // always green gradient for absolute
 }
 
-function makeLegend(id, maxVal) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  let html = `<span class="legend-lbl">Low</span><div class="legend-bar">`;
-  for (let i=0;i<10;i++) html+=`<div class="legend-seg" style="background:${dauColor(i/10*maxVal,maxVal)}"></div>`;
-  html += `</div><span class="legend-lbl">High ${fmtNum(maxVal)}</span>`;
-  el.innerHTML = html;
+// ══════════════════════════════════════════════════
+// % CHANGE COMPUTATION
+// ══════════════════════════════════════════════════
+function computeChanges(data, sortedKeys){
+  const chg={};
+  sortedKeys.forEach((k,i)=>{
+    if(i===0){chg[k]=null;return;}
+    const prev=data[sortedKeys[i-1]], curr=data[k];
+    chg[k]=(prev&&curr) ? +((curr-prev)/prev*100).toFixed(2) : null;
+  });
+  return chg;
 }
 
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // FORMAT
-// ═══════════════════════════════════════════════════
-function fmtNum(n) {
-  if (n === null || n === undefined || isNaN(n)) return '—';
-  if (n >= 1e9) return (n/1e9).toFixed(2)+'B';
-  if (n >= 1e6) return (n/1e6).toFixed(2)+'M';
-  if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
+// ══════════════════════════════════════════════════
+function fmtNum(n){
+  if(n===null||n===undefined||isNaN(n)) return '—';
+  if(n>=1e9) return (n/1e9).toFixed(2)+'B';
+  if(n>=1e6) return (n/1e6).toFixed(2)+'M';
+  if(n>=1e3) return (n/1e3).toFixed(1)+'K';
   return n.toLocaleString();
 }
+function fmtChg(v){
+  if(v===null||v===undefined) return '—';
+  return (v>=0?'+':'')+v.toFixed(2)+'%';
+}
 
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // TOOLTIP
-// ═══════════════════════════════════════════════════
-const ttEl = document.getElementById('tooltip');
-const ttLbl = document.getElementById('tt-lbl');
-const ttVal = document.getElementById('tt-val');
+// ══════════════════════════════════════════════════
+const ttEl=document.getElementById('tooltip');
+const ttLbl=document.getElementById('tt-lbl');
+const ttVal=document.getElementById('tt-val');
+const ttSub=document.getElementById('tt-sub');
 
-function tip(el, label, val) {
-  el.addEventListener('mouseenter', e => {
-    ttLbl.textContent = label;
-    ttVal.textContent = typeof val === 'number' ? fmtNum(val) + ' DAU' : val;
-    ttEl.style.display = 'block'; moveTip(e);
+function tip(el, label, primary, secondary){
+  el.addEventListener('mouseenter',e=>{
+    ttLbl.textContent=label;
+    ttVal.textContent=primary;
+    ttVal.style.color=primary.startsWith('+')?'#4ade80':primary.startsWith('-')?'#f87171':'#fff';
+    ttSub.textContent=secondary||'';
+    ttEl.style.display='block'; moveTip(e);
   });
-  el.addEventListener('mousemove', moveTip);
-  el.addEventListener('mouseleave', () => ttEl.style.display = 'none');
+  el.addEventListener('mousemove',moveTip);
+  el.addEventListener('mouseleave',()=>ttEl.style.display='none');
 }
-function moveTip(e) {
-  ttEl.style.left = (e.clientX+14)+'px';
-  ttEl.style.top  = (e.clientY-44)+'px';
+function moveTip(e){ ttEl.style.left=(e.clientX+14)+'px'; ttEl.style.top=(e.clientY-50)+'px'; }
+
+// ══════════════════════════════════════════════════
+// DATA GETTERS
+// ══════════════════════════════════════════════════
+function getCountry(){ return document.getElementById('sel-country').value; }
+function getData(type){
+  const c=getCountry();
+  const src=c==='__global__'?
+    {monthly:G.gMonthly,quarterly:G.gQuarterly,weekly:G.gWeekly,daily:G.gDaily}:
+    {monthly:G.cMonthly[c]||{},quarterly:G.cQuarterly[c]||{},weekly:G.cWeekly[c]||{},daily:G.cDaily[c]||{}};
+  return src[type]||{};
 }
 
-// ═══════════════════════════════════════════════════
-// GET DATA (global vs country)
-// ═══════════════════════════════════════════════════
-function getCountry() { return document.getElementById('sel-country').value; }
-
-function getData(type) {
-  const c = getCountry();
-  if (c === '__global__') {
-    if (type==='monthly')   return G.gMonthly;
-    if (type==='quarterly') return G.gQuarterly;
-    if (type==='weekly')    return G.gWeekly;
-    if (type==='daily')     return G.gDaily;
+// ══════════════════════════════════════════════════
+// LEGEND
+// ══════════════════════════════════════════════════
+function makeLegend(id, mode, maxAbsChg, maxAbs){
+  const el=document.getElementById(id); if(!el) return;
+  if(mode==='change'){
+    let html=`<span class="legend-lbl">-${maxAbsChg.toFixed(0)}%</span><div class="legend-bar">`;
+    for(let i=0;i<10;i++){
+      const v=-maxAbsChg+i*(maxAbsChg*2/9);
+      html+=`<div class="legend-seg" style="background:${changeColor(v)}"></div>`;
+    }
+    html+=`</div><span class="legend-lbl">+${maxAbsChg.toFixed(0)}%</span>`;
+    el.innerHTML=html;
   } else {
-    if (type==='monthly')   return G.cMonthly[c] || {};
-    if (type==='quarterly') return G.cQuarterly[c] || {};
-    if (type==='weekly')    return G.cWeekly[c] || {};
-    if (type==='daily')     return G.cDaily[c] || {};
+    let html=`<span class="legend-lbl">0</span><div class="legend-bar">`;
+    for(let i=0;i<10;i++) html+=`<div class="legend-seg" style="background:${absColor(i/9*maxAbs,maxAbs)}"></div>`;
+    html+=`</div><span class="legend-lbl">${fmtNum(maxAbs)}</span>`;
+    el.innerHTML=html;
   }
 }
 
-// ═══════════════════════════════════════════════════
-// RENDER: MONTHLY (rows=years, cols=months Jan-Dec)
-// ═══════════════════════════════════════════════════
-function renderMonthly() {
-  const data = getData('monthly');
-  const MSHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const maxVal = Math.max(...Object.values(data).filter(v=>v>0), 1);
+// ══════════════════════════════════════════════════
+// RENDER: MONTHLY
+// ══════════════════════════════════════════════════
+function renderMonthly(){
+  const data=getData('monthly');
+  const MSHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const sortedMo=G.allMonths.filter(k=>data[k]).sort();
+  const chg=computeChanges(data,sortedMo);
+  const chgVals=Object.values(chg).filter(v=>v!==null);
+  const maxAbsChg=Math.max(...chgVals.map(Math.abs),1);
+  const maxAbs=Math.max(...sortedMo.map(k=>data[k]||0),1);
 
-  const tbl = document.getElementById('tbl-monthly');
-  tbl.innerHTML = '';
-
-  // Header
-  const thead = tbl.createTHead();
-  const hr = thead.insertRow();
-  ['Year',...MSHORT].forEach((h,i) => {
-    const th=document.createElement('th');
-    th.textContent=h;
-    if(i===0) th.className='th-time';
-    hr.appendChild(th);
+  const tbl=document.getElementById('tbl-monthly'); tbl.innerHTML='';
+  const thead=tbl.createTHead(); const hr=thead.insertRow();
+  ['Year',...MSHORT].forEach((h,i)=>{
+    const th=document.createElement('th'); th.textContent=h;
+    if(i===0) th.className='th-time'; hr.appendChild(th);
   });
 
-  // Rows per year
-  const tbody = tbl.createTBody();
-  G.years.forEach(y => {
-    const tr = tbody.insertRow();
-    const ytd = tr.insertCell(); ytd.className='td-year'; ytd.textContent=y;
-    for (let mo=1;mo<=12;mo++) {
-      const td = tr.insertCell();
-      const key = `${y}-${String(mo).padStart(2,'0')}`;
-      const val = data[key];
-      if (!val) { td.className='td-empty'; }
-      else {
-        td.style.background = dauColor(val, maxVal);
-        td.textContent = fmtNum(val);
-        tip(td, `${y} ${MSHORT[mo-1]}`, val);
+  const tbody=tbl.createTBody();
+  G.years.forEach(y=>{
+    const tr=tbody.insertRow();
+    const ytd=tr.insertCell(); ytd.className='td-year'; ytd.textContent=y;
+    for(let mo=1;mo<=12;mo++){
+      const td=tr.insertCell();
+      const key=`${y}-${String(mo).padStart(2,'0')}`;
+      const abs=data[key]; const c=chg[key];
+      if(!abs){ td.className='td-empty'; continue; }
+
+      if(G.mode==='change'){
+        td.style.background=changeColor(c);
+        td.textContent=c!==null?fmtChg(c):fmtNum(abs);
+        tip(td,`${y} ${MSHORT[mo-1]}`, c!==null?fmtChg(c):'first', `DAU: ${fmtNum(abs)}`);
+      } else {
+        td.style.background=absColor(abs,maxAbs);
+        td.textContent=fmtNum(abs);
+        tip(td,`${y} ${MSHORT[mo-1]}`, fmtNum(abs)+' DAU', c!==null?`MoM: ${fmtChg(c)}`:'');
       }
     }
   });
-
-  makeLegend('leg-monthly', maxVal);
+  makeLegend('leg-monthly',G.mode,maxAbsChg,maxAbs);
 }
 
-// ═══════════════════════════════════════════════════
-// RENDER: QUARTERLY (rows=years, cols=Q1-Q4)
-// ═══════════════════════════════════════════════════
-function renderQuarterly() {
-  const data = getData('quarterly');
-  const maxVal = Math.max(...Object.values(data).filter(v=>v>0), 1);
+// ══════════════════════════════════════════════════
+// RENDER: QUARTERLY
+// ══════════════════════════════════════════════════
+function renderQuarterly(){
+  const data=getData('quarterly');
+  const sortedQ=G.allQuarters.filter(k=>data[k]).sort();
+  const chg=computeChanges(data,sortedQ);
+  const chgVals=Object.values(chg).filter(v=>v!==null);
+  const maxAbsChg=Math.max(...chgVals.map(Math.abs),1);
+  const maxAbs=Math.max(...sortedQ.map(k=>data[k]||0),1);
 
-  const tbl = document.getElementById('tbl-quarterly');
-  tbl.innerHTML = '';
-
-  const thead = tbl.createTHead();
-  const hr = thead.insertRow();
-  ['Year','Q1','Q2','Q3','Q4'].forEach((h,i) => {
-    const th=document.createElement('th');
-    th.textContent=h;
-    if(i===0) th.className='th-time';
-    hr.appendChild(th);
+  const tbl=document.getElementById('tbl-quarterly'); tbl.innerHTML='';
+  const thead=tbl.createTHead(); const hr=thead.insertRow();
+  ['Year','Q1','Q2','Q3','Q4'].forEach((h,i)=>{
+    const th=document.createElement('th'); th.textContent=h;
+    if(i===0) th.className='th-time'; hr.appendChild(th);
   });
 
-  const tbody = tbl.createTBody();
-  G.years.forEach(y => {
-    const tr = tbody.insertRow();
-    const ytd = tr.insertCell(); ytd.className='td-year'; ytd.textContent=y;
-    for (let q=1;q<=4;q++) {
-      const td = tr.insertCell();
-      const key = `${y}-Q${q}`;
-      const val = data[key];
-      if (!val) { td.className='td-empty'; }
-      else {
-        td.style.background = dauColor(val, maxVal);
-        td.textContent = fmtNum(val);
-        tip(td, `${y} Q${q}`, val);
+  const tbody=tbl.createTBody();
+  G.years.forEach(y=>{
+    const tr=tbody.insertRow();
+    const ytd=tr.insertCell(); ytd.className='td-year'; ytd.textContent=y;
+    for(let q=1;q<=4;q++){
+      const td=tr.insertCell();
+      const key=`${y}-Q${q}`;
+      const abs=data[key]; const c=chg[key];
+      if(!abs){ td.className='td-empty'; continue; }
+
+      if(G.mode==='change'){
+        td.style.background=changeColor(c);
+        td.textContent=c!==null?fmtChg(c):fmtNum(abs);
+        tip(td,`${y} Q${q}`, c!==null?fmtChg(c):'first', `DAU: ${fmtNum(abs)}`);
+      } else {
+        td.style.background=absColor(abs,maxAbs);
+        td.textContent=fmtNum(abs);
+        tip(td,`${y} Q${q}`, fmtNum(abs)+' DAU', c!==null?`QoQ: ${fmtChg(c)}`:'');
       }
     }
   });
-
-  makeLegend('leg-quarterly', maxVal);
+  makeLegend('leg-quarterly',G.mode,maxAbsChg,maxAbs);
 }
 
-// ═══════════════════════════════════════════════════
-// RENDER: WEEKLY (rows=years, cols=W01-W52, selected year)
-// ═══════════════════════════════════════════════════
-function renderWeekly() {
-  const data = getData('weekly');
-  const year = document.getElementById('sel-week-year').value;
+// ══════════════════════════════════════════════════
+// RENDER: WEEKLY
+// ══════════════════════════════════════════════════
+function renderWeekly(){
+  const data=getData('weekly');
+  const year=document.getElementById('sel-week-year').value;
+  const weeks=Object.keys(data).filter(k=>k.startsWith(year+'-W')).sort();
+  const chg=computeChanges(data,weeks);
+  const chgVals=Object.values(chg).filter(v=>v!==null);
+  const maxAbsChg=Math.max(...chgVals.map(Math.abs),1);
+  const maxAbs=Math.max(...weeks.map(k=>data[k]||0),1);
 
-  // Get all weeks in selected year
-  const weeks = Object.keys(data)
-    .filter(k => k.startsWith(year+'-W'))
-    .sort();
-  const maxVal = Math.max(...weeks.map(k=>data[k]||0), 1);
+  const tbl=document.getElementById('tbl-weekly'); tbl.innerHTML='';
+  if(!weeks.length){ tbl.innerHTML='<tr><td style="color:#444;padding:20px">No data for this year</td></tr>'; return; }
 
-  const tbl = document.getElementById('tbl-weekly');
-  tbl.innerHTML = '';
+  const thead=tbl.createTHead(); const hr=thead.insertRow();
+  const th0=document.createElement('th'); th0.textContent='Week'; th0.className='th-time'; hr.appendChild(th0);
+  weeks.forEach(k=>{
+    const th=document.createElement('th'); th.textContent=k.replace(year+'-W','')+'W'; hr.appendChild(th);
+  });
 
-  if (!weeks.length) {
-    tbl.innerHTML = '<tr><td style="color:#444;padding:20px">No data for this year</td></tr>';
-    return;
+  const tbody=tbl.createTBody();
+  const tr=tbody.insertRow();
+  const ytd=tr.insertCell(); ytd.className='td-year'; ytd.textContent=year;
+  weeks.forEach(k=>{
+    const td=tr.insertCell();
+    const abs=data[k]; const c=chg[k];
+    if(!abs){ td.className='td-empty'; return; }
+    const wLabel=`${year} Week ${k.split('-W')[1]}`;
+    if(G.mode==='change'){
+      td.style.background=changeColor(c);
+      td.textContent=c!==null?fmtChg(c):fmtNum(abs);
+      tip(td,wLabel, c!==null?fmtChg(c):'first', `DAU: ${fmtNum(abs)}`);
+    } else {
+      td.style.background=absColor(abs,maxAbs);
+      td.textContent=fmtNum(abs);
+      tip(td,wLabel, fmtNum(abs)+' DAU', c!==null?`WoW: ${fmtChg(c)}`:'');
+    }
+  });
+  makeLegend('leg-weekly',G.mode,maxAbsChg,maxAbs);
+}
+
+// ══════════════════════════════════════════════════
+// RENDER: CALENDAR (daily)
+// ══════════════════════════════════════════════════
+function renderCalendar(){
+  const data=getData('daily');
+  const year=+document.getElementById('sel-cal-year').value;
+
+  const yearKeys=Object.keys(data).filter(k=>k.startsWith(year+'-')).sort();
+  const chg=computeChanges(data,yearKeys);
+  const chgVals=Object.values(chg).filter(v=>v!==null);
+  const maxAbsChg=Math.max(...chgVals.map(Math.abs),1);
+  const maxAbs=Math.max(...yearKeys.map(k=>data[k]||0),1);
+
+  const jan1=new Date(year,0,1), totalDays=Math.floor((new Date(year,11,31)-jan1)/86400000)+1;
+  const startDow=jan1.getDay();
+  const weeks=[]; let week=new Array(startDow).fill(null);
+
+  for(let di=0;di<totalDays;di++){
+    const dt=new Date(year,0,1+di);
+    const mo2=String(dt.getMonth()+1).padStart(2,'0'), d2=String(dt.getDate()).padStart(2,'0');
+    const key=`${year}-${mo2}-${d2}`;
+    const label=dt.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    week.push({key, abs:data[key]||0, chg:chg[key]??null, label});
+    if(week.length===7){weeks.push(week);week=[];}
   }
+  if(week.length){while(week.length<7)week.push(null);weeks.push(week);}
 
-  const thead = tbl.createTHead();
-  const hr = thead.insertRow();
-  const th0=document.createElement('th'); th0.textContent='Month'; th0.className='th-time'; hr.appendChild(th0);
-  weeks.forEach(k => {
-    const th=document.createElement('th'); th.textContent=k.split('-W')[1]+'W'; hr.appendChild(th);
-  });
-
-  // Single row for the year
-  const tbody = tbl.createTBody();
-  const tr = tbody.insertRow();
-  const ytd = tr.insertCell(); ytd.className='td-year'; ytd.textContent=year;
-  weeks.forEach(k => {
-    const td = tr.insertCell();
-    const val = data[k];
-    if (!val) { td.className='td-empty'; }
-    else {
-      td.style.background = dauColor(val, maxVal);
-      td.textContent = fmtNum(val);
-      tip(td, `${year} Week ${k.split('-W')[1]}`, val);
-    }
-  });
-
-  // All-years weekly comparison table
-  const thead2 = document.createElement('thead');
-  const hr2 = document.createElement('tr');
-  [document.createElement('th'),...G.years.map(()=>document.createElement('th'))].forEach((th,i)=>{
-    th.className = i===0?'th-time':'';
-    th.textContent = i===0?'Year':G.years[i-1];
-    hr2.appendChild(th);
-  });
-
-  makeLegend('leg-weekly', maxVal);
-}
-
-// ═══════════════════════════════════════════════════
-// RENDER: CALENDAR (GitHub-style daily heatmap)
-// ═══════════════════════════════════════════════════
-function renderCalendar() {
-  const data = getData('daily');
-  const year = +document.getElementById('sel-cal-year').value;
-  const wrap = document.getElementById('cal-outer');
-
-  // Filter to this year
-  const yearData = {};
-  Object.entries(data).forEach(([k,v]) => { if(k.startsWith(year+'-')) yearData[k]=v; });
-  const maxVal = Math.max(...Object.values(yearData), 1);
-
-  // Build calendar grid
-  const jan1 = new Date(year,0,1);
-  const dec31 = new Date(year,11,31);
-  const totalDays = Math.floor((dec31-jan1)/86400000)+1;
-  const startDow = jan1.getDay(); // 0=Sun
-
-  // Assemble cells: [week][dow]
-  const weeks = [];
-  let week = new Array(startDow).fill(null);
-  const dayLabels = [];
-
-  for (let di=0; di<totalDays; di++) {
-    const dt = new Date(year,0,1+di);
-    const mo2 = String(dt.getMonth()+1).padStart(2,'0');
-    const d2  = String(dt.getDate()).padStart(2,'0');
-    const key = `${year}-${mo2}-${d2}`;
-    const label = dt.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    week.push({key, val: data[key]||0, label});
-    if (week.length===7){weeks.push(week);week=[];}
-  }
-  if (week.length){while(week.length<7)week.push(null);weeks.push(week);}
-
-  // Month label positions
-  const monthStarts = {};
-  weeks.forEach((wk,wi)=>{
-    wk.forEach(cell=>{
-      if(!cell)return;
-      const dt=new Date(cell.key);
-      if(dt.getDate()<=7 && !Object.values(monthStarts).includes(dt.getMonth())){
-        monthStarts[wi]=dt.getMonth();
-      }
-    });
-  });
+  const monthStarts={};
+  weeks.forEach((wk,wi)=>wk.forEach(cell=>{
+    if(!cell) return;
+    const dt=new Date(cell.key);
+    if(dt.getDate()<=7 && !Object.values(monthStarts).includes(dt.getMonth())) monthStarts[wi]=dt.getMonth();
+  }));
   const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
   let html=`<div class="cal-container">`;
-  // DOW labels
   html+=`<div class="cal-dow-col">`;
   ['S','M','T','W','T','F','S'].forEach(d=>html+=`<div class="cal-dw">${d}</div>`);
   html+=`</div><div>`;
-  // Month label row
   html+=`<div class="cal-month-row">`;
-  weeks.forEach((_,wi)=>{
-    html+=`<div class="cal-ml" style="width:14px">${monthStarts[wi]!==undefined?MON[monthStarts[wi]]:''}</div>`;
-  });
-  html+=`</div>`;
-  // Week columns
-  html+=`<div class="cal-weeks-row">`;
+  weeks.forEach((_,wi)=>html+=`<div class="cal-ml">${monthStarts[wi]!==undefined?MON[monthStarts[wi]]:''}</div>`);
+  html+=`</div><div class="cal-weeks-row">`;
   weeks.forEach(wk=>{
     html+=`<div class="cal-week-col">`;
     wk.forEach(cell=>{
       if(!cell){html+=`<div class="cal-cell" style="background:transparent"></div>`;return;}
-      const bg=cell.val>0?dauColor(cell.val,maxVal):'#111118';
-      html+=`<div class="cal-cell" style="background:${bg}" data-lbl="${cell.label}" data-val="${cell.val}"></div>`;
+      const bg=G.mode==='change'
+        ? (cell.abs>0 ? changeColor(cell.chg) : '#111118')
+        : absColor(cell.abs,maxAbs);
+      const pri=G.mode==='change'&&cell.chg!==null?fmtChg(cell.chg):fmtNum(cell.abs)+' DAU';
+      const sub=G.mode==='change'?`DAU: ${fmtNum(cell.abs)}`:cell.chg!==null?`DoD: ${fmtChg(cell.chg)}`:'';
+      html+=`<div class="cal-cell" style="background:${bg}" data-lbl="${cell.label}" data-pri="${pri}" data-sub="${sub}"></div>`;
     });
     html+=`</div>`;
   });
   html+=`</div></div></div>`;
 
-  wrap.innerHTML=html;
-  wrap.querySelectorAll('[data-val]').forEach(el=>{
-    tip(el, el.dataset.lbl, +el.dataset.val);
+  const wrap=document.getElementById('cal-outer'); wrap.innerHTML=html;
+  wrap.querySelectorAll('[data-lbl]').forEach(el=>{
+    tip(el,el.dataset.lbl,el.dataset.pri,el.dataset.sub);
   });
-  makeLegend('leg-daily', maxVal);
+  makeLegend('leg-daily',G.mode,maxAbsChg,maxAbs);
 }
 
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // RENDER ALL
-// ═══════════════════════════════════════════════════
-function renderAll(){
-  renderMonthly();
-  renderQuarterly();
-  renderWeekly();
-  renderCalendar();
-}
+// ══════════════════════════════════════════════════
+function renderAll(){ renderMonthly(); renderQuarterly(); renderWeekly(); renderCalendar(); }
 </script>
 </body>
 </html>

@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DAU Heatmap Viewer</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+
+    :root{
+      --bg:#0a0a0f;
+      --bg2:#111118;
+      --bg3:#1a1a24;
+      --border:#232330;
+      --text:#fff;
+      --muted:#888;
+      --dim:#444;
+      --accent:#3b82f6;
+      --accent2:#f5a623;
+    }
+
+    body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
+
+    /* ── HEADER ── */
+    .header{
+      padding:20px 28px 16px;
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;gap:14px;
+    }
+    .header h1{font-size:1.25rem;font-weight:700;color:#fff;}
+    .header .badge{
+      background:var(--accent);color:#fff;
+      font-size:0.65rem;font-weight:700;padding:2px 8px;
+      border-radius:20px;text-transform:uppercase;letter-spacing:.05em;
+    }
+    .header .hint{font-size:0.75rem;color:var(--muted);margin-left:auto;}
+
+    /* ── UPLOAD ZONE ── */
+    #upload-zone{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      min-height:calc(100vh - 61px);gap:16px;padding:40px;
+    }
+    .drop-box{
+      border:2px dashed var(--border);border-radius:16px;
+      padding:48px 64px;text-align:center;cursor:pointer;
+      transition:all .2s;max-width:520px;width:100%;
+    }
+    .drop-box:hover,.drop-box.drag-over{
+      border-color:var(--accent);background:rgba(59,130,246,.05);
+    }
+    .drop-icon{font-size:3rem;margin-bottom:12px;opacity:.5;}
+    .drop-box h2{font-size:1.1rem;font-weight:600;color:#fff;margin-bottom:8px;}
+    .drop-box p{font-size:0.8rem;color:var(--muted);line-height:1.6;}
+    .drop-box .format-tag{
+      display:inline-block;margin-top:14px;padding:4px 12px;
+      background:var(--bg3);border:1px solid var(--border);
+      border-radius:6px;font-size:0.72rem;color:var(--muted);font-family:monospace;
+    }
+    #file-input{display:none;}
+    .btn-upload{
+      margin-top:14px;padding:10px 28px;border:none;border-radius:8px;
+      background:var(--accent);color:#fff;font-size:0.85rem;
+      font-weight:600;cursor:pointer;transition:opacity .15s;
+    }
+    .btn-upload:hover{opacity:.85;}
+
+    /* ── PROGRESS ── */
+    #progress-zone{
+      display:none;flex-direction:column;align-items:center;
+      justify-content:center;min-height:calc(100vh - 61px);gap:20px;
+    }
+    .progress-bar-wrap{width:320px;background:var(--bg3);border-radius:8px;height:6px;overflow:hidden;}
+    .progress-bar{height:100%;background:var(--accent);border-radius:8px;width:0%;transition:width .1s;}
+    .progress-label{font-size:0.85rem;color:var(--muted);}
+
+    /* ── DASHBOARD ── */
+    #dashboard{display:none;padding:24px 28px;}
+
+    .stats-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;}
+    .stat{
+      background:var(--bg2);border:1px solid var(--border);
+      border-radius:10px;padding:12px 18px;min-width:130px;
+    }
+    .stat .sl{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+    .stat .sv{font-size:1.1rem;font-weight:700;color:#fff;}
+
+    /* ── TABS ── */
+    .tabs-bar{
+      display:flex;gap:4px;background:var(--bg2);
+      padding:5px;border-radius:10px;width:fit-content;margin-bottom:22px;
+    }
+    .tab-btn{
+      padding:7px 20px;border:none;border-radius:7px;
+      cursor:pointer;font-size:0.82rem;font-weight:600;
+      background:transparent;color:var(--muted);transition:all .2s;
+    }
+    .tab-btn:hover{color:#bbb;}
+    .tab-btn.active{background:var(--bg3);color:#fff;box-shadow:0 1px 6px rgba(0,0,0,.4);}
+
+    .tab-panel{display:none;}
+    .tab-panel.active{display:block;}
+
+    /* ── CONTROLS ── */
+    .controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+    .ctl-label{font-size:0.75rem;color:var(--muted);}
+    select,input[type=range]{
+      background:var(--bg2);border:1px solid var(--border);
+      color:#fff;border-radius:6px;padding:5px 10px;
+      font-size:0.8rem;cursor:pointer;
+    }
+    select:focus{outline:none;border-color:var(--accent);}
+    .ctl-group{display:flex;align-items:center;gap:8px;}
+    .toggle-wrap{display:flex;gap:0;border:1px solid var(--border);border-radius:7px;overflow:hidden;}
+    .toggle-btn{
+      padding:5px 14px;font-size:0.75rem;font-weight:600;
+      background:transparent;border:none;color:var(--muted);cursor:pointer;transition:all .15s;
+    }
+    .toggle-btn.active{background:var(--bg3);color:#fff;}
+
+    /* ── HEATMAP TABLE ── */
+    .hm-wrap{overflow-x:auto;padding-bottom:12px;}
+    .hm-table{border-collapse:separate;border-spacing:3px;font-size:0;}
+    .hm-table th{
+      font-size:0.68rem;font-weight:600;color:var(--muted);
+      text-align:center;padding:5px 3px;white-space:nowrap;
+      letter-spacing:.04em;text-transform:uppercase;
+    }
+    .hm-table th.row-h{text-align:left;min-width:120px;max-width:160px;padding-right:8px;}
+    .hm-table td{
+      width:38px;height:34px;border-radius:5px;
+      text-align:center;vertical-align:middle;
+      font-size:0.7rem;font-weight:600;color:#fff;
+      cursor:default;transition:filter .12s;
+      white-space:nowrap;
+    }
+    .hm-table td:hover{filter:brightness(1.25);z-index:2;position:relative;}
+    .hm-table td.country-cell{
+      background:transparent!important;color:var(--muted)!important;
+      text-align:left;font-size:0.75rem;font-weight:500;
+      padding-right:8px;width:auto;
+    }
+    .hm-table td.empty{background:var(--bg2)!important;color:transparent!important;}
+
+    /* ── CALENDAR (daily) ── */
+    .cal-wrap{overflow-x:auto;padding-bottom:8px;}
+    .cal-grid{display:flex;gap:3px;}
+    .cal-col{display:flex;flex-direction:column;gap:3px;}
+    .cal-cell{
+      width:14px;height:14px;border-radius:2px;
+      cursor:default;transition:filter .12s;flex-shrink:0;
+    }
+    .cal-cell:hover{filter:brightness(1.3);}
+    .cal-month-labels{display:flex;gap:0;margin-bottom:6px;padding-left:4px;}
+    .cal-ml{font-size:0.68rem;color:var(--muted);}
+    .cal-dow{display:flex;flex-direction:column;gap:3px;margin-right:6px;}
+    .cal-dw{font-size:0.6rem;color:var(--dim);height:14px;line-height:14px;}
+
+    /* ── LEGEND ── */
+    .legend{display:flex;align-items:center;gap:8px;margin-top:16px;}
+    .legend-label{font-size:0.72rem;color:var(--muted);}
+    .legend-bar{
+      display:flex;height:10px;width:160px;
+      border-radius:4px;overflow:hidden;
+    }
+    .legend-seg{flex:1;}
+
+    /* ── TOOLTIP ── */
+    .tooltip{
+      display:none;position:fixed;z-index:9999;
+      background:#1e1e2e;border:1px solid var(--border);
+      border-radius:8px;padding:8px 12px;
+      font-size:0.78rem;color:#ddd;pointer-events:none;
+      box-shadow:0 4px 20px rgba(0,0,0,.6);
+      white-space:nowrap;
+    }
+    .tt-title{color:var(--muted);font-size:0.7rem;margin-bottom:3px;}
+    .tt-val{font-size:1rem;font-weight:700;color:#fff;}
+
+    .info-note{font-size:0.72rem;color:var(--dim);margin-top:10px;}
+
+    /* ── COUNTRY SEARCH ── */
+    input[type=text]{
+      background:var(--bg2);border:1px solid var(--border);
+      color:#fff;border-radius:6px;padding:5px 10px;
+      font-size:0.8rem;width:180px;
+    }
+    input[type=text]::placeholder{color:var(--dim);}
+    input[type=text]:focus{outline:none;border-color:var(--accent);}
+
+    /* scrollbar */
+    ::-webkit-scrollbar{height:5px;width:5px;}
+    ::-webkit-scrollbar-track{background:var(--bg);}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+    @media(max-width:600px){
+      .header .hint{display:none;}
+      .hm-table td{width:30px;height:28px;font-size:0;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1>DAU Heatmap</h1>
+  <span class="badge">Client-side only</span>
+  <span class="hint">No data is uploaded or stored — everything runs in your browser</span>
+</div>
+
+<!-- Upload -->
+<div id="upload-zone">
+  <div class="drop-box" id="drop-box">
+    <div class="drop-icon">📊</div>
+    <h2>Drop your CSV file here</h2>
+    <p>Supports tab-separated or comma-separated files.<br>
+       Encoding: UTF-16 or UTF-8 auto-detected.</p>
+    <div class="format-tag">date · country · DAU</div>
+    <br/>
+    <button class="btn-upload" onclick="document.getElementById('file-input').click()">Choose File</button>
+    <input type="file" id="file-input" accept=".csv,.tsv,.txt"/>
+  </div>
+  <p style="font-size:.72rem;color:var(--dim);">Expected date formats: <code>YYYY. M. D.</code> &nbsp;|&nbsp; <code>YYYY-MM-DD</code> &nbsp;|&nbsp; <code>MM/DD/YYYY</code></p>
+</div>
+
+<!-- Progress -->
+<div id="progress-zone">
+  <div class="progress-label" id="progress-label">Reading file…</div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+
+  <!-- Stat cards -->
+  <div class="stats-row">
+    <div class="stat"><div class="sl">Countries</div><div class="sv" id="s-countries">—</div></div>
+    <div class="stat"><div class="sl">Date Range</div><div class="sv" id="s-range">—</div></div>
+    <div class="stat"><div class="sl">Total Records</div><div class="sv" id="s-records">—</div></div>
+    <div class="stat"><div class="sl">Peak DAU</div><div class="sv" id="s-peak">—</div></div>
+    <div class="stat"><div class="sl">File</div><div class="sv" id="s-file" style="font-size:.85rem">—</div></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-bar">
+    <button class="tab-btn active" data-tab="monthly">Monthly</button>
+    <button class="tab-btn" data-tab="quarterly">Quarterly</button>
+    <button class="tab-btn" data-tab="weekly">Weekly</button>
+    <button class="tab-btn" data-tab="daily">Daily</button>
+  </div>
+
+  <!-- Monthly tab -->
+  <div class="tab-panel active" id="tab-monthly">
+    <div class="controls">
+      <div class="ctl-group">
+        <span class="ctl-label">Countries</span>
+        <select id="m-topN">
+          <option value="10">Top 10</option>
+          <option value="20" selected>Top 20</option>
+          <option value="30">Top 30</option>
+          <option value="50">Top 50</option>
+          <option value="0">All</option>
+        </select>
+      </div>
+      <div class="ctl-group">
+        <span class="ctl-label">Search</span>
+        <input type="text" id="m-search" placeholder="Filter country…"/>
+      </div>
+      <div class="ctl-group">
+        <span class="ctl-label">Scale</span>
+        <div class="toggle-wrap">
+          <button class="toggle-btn active" data-scale="global" data-for="monthly">Global</button>
+          <button class="toggle-btn" data-scale="local" data-for="monthly">Per-country</button>
+        </div>
+      </div>
+    </div>
+    <div class="hm-wrap"><table class="hm-table" id="monthly-table"></table></div>
+    <div class="legend" id="monthly-legend"></div>
+    <p class="info-note">Color intensity = DAU. Global scale compares absolute values; Per-country scale shows each country's trend relative to its own peak.</p>
+  </div>
+
+  <!-- Quarterly tab -->
+  <div class="tab-panel" id="tab-quarterly">
+    <div class="controls">
+      <div class="ctl-group">
+        <span class="ctl-label">Countries</span>
+        <select id="q-topN">
+          <option value="10">Top 10</option>
+          <option value="20" selected>Top 20</option>
+          <option value="30">Top 30</option>
+          <option value="50">Top 50</option>
+          <option value="0">All</option>
+        </select>
+      </div>
+      <div class="ctl-group">
+        <span class="ctl-label">Search</span>
+        <input type="text" id="q-search" placeholder="Filter country…"/>
+      </div>
+      <div class="ctl-group">
+        <span class="ctl-label">Scale</span>
+        <div class="toggle-wrap">
+          <button class="toggle-btn active" data-scale="global" data-for="quarterly">Global</button>
+          <button class="toggle-btn" data-scale="local" data-for="quarterly">Per-country</button>
+        </div>
+      </div>
+    </div>
+    <div class="hm-wrap"><table class="hm-table" id="quarterly-table"></table></div>
+    <div class="legend" id="quarterly-legend"></div>
+  </div>
+
+  <!-- Weekly tab -->
+  <div class="tab-panel" id="tab-weekly">
+    <div class="controls">
+      <div class="ctl-group">
+        <span class="ctl-label">Countries</span>
+        <select id="w-topN">
+          <option value="10" selected>Top 10</option>
+          <option value="20">Top 20</option>
+          <option value="30">Top 30</option>
+        </select>
+      </div>
+      <div class="ctl-group">
+        <span class="ctl-label">Year</span>
+        <select id="w-year"></select>
+      </div>
+    </div>
+    <div class="hm-wrap"><table class="hm-table" id="weekly-table"></table></div>
+    <div class="legend" id="weekly-legend"></div>
+  </div>
+
+  <!-- Daily tab (calendar) -->
+  <div class="tab-panel" id="tab-daily">
+    <div class="controls">
+      <div class="ctl-group">
+        <span class="ctl-label">Country</span>
+        <select id="d-country" style="min-width:180px;"></select>
+      </div>
+      <div class="ctl-group">
+        <span class="ctl-label">Year</span>
+        <select id="d-year"></select>
+      </div>
+    </div>
+    <div class="cal-wrap" id="cal-wrap"></div>
+    <div class="legend" id="daily-legend"></div>
+    <p class="info-note">GitHub-style calendar heatmap. Each cell = one day.</p>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip">
+  <div class="tt-title" id="tt-title"></div>
+  <div class="tt-val" id="tt-val"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let G = {
+  countryTotals: {},
+  monthly: {},   // { country: { 'YYYY-MM': dau } }
+  quarterly: {}, // { country: { 'YYYY-Q#': dau } }
+  weekly: {},    // { country: { 'YYYY-WNN': dau } }
+  daily: {},     // { country: { 'YYYY-MM-DD': dau } }
+  allMonths: [], allQuarters: [], allWeeks: {}, allYears: [],
+  peakDAU: 0,
+  scales: { monthly: 'global', quarterly: 'global', weekly: 'global' }
+};
+
+// ═══════════════════════════════════════════════════════
+// UPLOAD & PARSING
+// ═══════════════════════════════════════════════════════
+
+const dropBox = document.getElementById('drop-box');
+const fileInput = document.getElementById('file-input');
+
+dropBox.addEventListener('dragover', e => { e.preventDefault(); dropBox.classList.add('drag-over'); });
+dropBox.addEventListener('dragleave', () => dropBox.classList.remove('drag-over'));
+dropBox.addEventListener('drop', e => { e.preventDefault(); dropBox.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+function handleFile(file) {
+  if (!file) return;
+  showProgress('Reading file…', 0);
+  const reader = new FileReader();
+  reader.onload = e => parseCSV(e.target.result, file.name);
+  reader.readAsArrayBuffer(file);
+}
+
+function showProgress(msg, pct) {
+  document.getElementById('upload-zone').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'none';
+  const pz = document.getElementById('progress-zone');
+  pz.style.display = 'flex';
+  document.getElementById('progress-label').textContent = msg;
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function parseDate(s) {
+  s = s.trim();
+  // YYYY. M. D.
+  let m = s.match(/^(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})\.?$/);
+  if (m) return { y: +m[1], mo: +m[2], d: +m[3] };
+  // YYYY-MM-DD
+  m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) return { y: +m[1], mo: +m[2], d: +m[3] };
+  // MM/DD/YYYY
+  m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m) return { y: +m[3], mo: +m[1], d: +m[2] };
+  return null;
+}
+
+function parseCSV(buffer, filename) {
+  showProgress('Decoding…', 5);
+
+  // Detect UTF-16 BOM
+  const u8 = new Uint8Array(buffer);
+  let text;
+  if (u8[0] === 0xFF && u8[1] === 0xFE) {
+    text = new TextDecoder('utf-16le').decode(buffer);
+  } else if (u8[0] === 0xFE && u8[1] === 0xFF) {
+    text = new TextDecoder('utf-16be').decode(buffer);
+  } else {
+    text = new TextDecoder('utf-8').decode(buffer);
+  }
+
+  showProgress('Parsing rows…', 15);
+
+  // Detect delimiter from first line
+  const firstNL = text.indexOf('\n');
+  const firstLine = firstNL > -1 ? text.slice(0, firstNL) : text;
+  const delim = firstLine.includes('\t') ? '\t' : ',';
+
+  setTimeout(() => {
+    const lines = text.split('\n');
+    const total = lines.length;
+    const monthly = {}, quarterly = {}, weekly = {}, daily = {};
+    const countryTotals = {};
+    let peakDAU = 0;
+    let parsed = 0;
+
+    // Find column indices from header
+    const header = lines[0].trim().split(delim).map(h => h.trim().toLowerCase().replace(/\uFEFF/g,''));
+    let dateIdx = header.findIndex(h => h === 'date');
+    let countryIdx = header.findIndex(h => h === 'country');
+    let dauIdx = header.findIndex(h => h === 'dau');
+    if (dateIdx < 0) dateIdx = 0;
+    if (countryIdx < 0) countryIdx = 1;
+    if (dauIdx < 0) dauIdx = 2;
+
+    function add(obj, country, key, val) {
+      if (!obj[country]) obj[country] = {};
+      obj[country][key] = (obj[country][key] || 0) + val;
+    }
+
+    function weekStr(y, mo, d) {
+      // ISO week approximation
+      const dt = new Date(y, mo - 1, d);
+      const jan1 = new Date(y, 0, 1);
+      const wk = Math.ceil(((dt - jan1) / 86400000 + jan1.getDay() + 1) / 7);
+      return `${y}-W${String(wk).padStart(2,'0')}`;
+    }
+
+    const CHUNK = 50000;
+    let i = 1;
+
+    function processChunk() {
+      const end = Math.min(i + CHUNK, total);
+      for (; i < end; i++) {
+        const line = lines[i];
+        if (!line.trim()) continue;
+        const parts = line.split(delim);
+        if (parts.length < 3) continue;
+        const dt = parseDate(parts[dateIdx]);
+        if (!dt) continue;
+        const country = (parts[countryIdx] || '').trim();
+        if (!country) continue;
+        const dau = parseInt((parts[dauIdx] || '').trim(), 10);
+        if (isNaN(dau) || dau < 0) continue;
+
+        parsed++;
+        if (dau > peakDAU) peakDAU = dau;
+        countryTotals[country] = (countryTotals[country] || 0) + dau;
+
+        const mo2 = String(dt.mo).padStart(2,'0');
+        const d2  = String(dt.d).padStart(2,'0');
+        const mkey = `${dt.y}-${mo2}`;
+        const qkey = `${dt.y}-Q${Math.ceil(dt.mo/3)}`;
+        const wkey = weekStr(dt.y, dt.mo, dt.d);
+        const dkey = `${dt.y}-${mo2}-${d2}`;
+
+        add(monthly,   country, mkey, dau);
+        add(quarterly, country, qkey, dau);
+        add(weekly,    country, wkey, dau);
+        add(daily,     country, dkey, dau);
+      }
+
+      const pct = 15 + Math.round((i / total) * 70);
+      showProgress(`Parsing… ${Math.round(i/total*100)}%`, pct);
+
+      if (i < total) {
+        setTimeout(processChunk, 0);
+      } else {
+        finalize(monthly, quarterly, weekly, daily, countryTotals, peakDAU, parsed, filename);
+      }
+    }
+
+    processChunk();
+  }, 20);
+}
+
+function finalize(monthly, quarterly, weekly, daily, countryTotals, peakDAU, parsed, filename) {
+  showProgress('Building heatmap…', 90);
+
+  G.monthly = monthly;
+  G.quarterly = quarterly;
+  G.weekly = weekly;
+  G.daily = daily;
+  G.countryTotals = countryTotals;
+  G.peakDAU = peakDAU;
+
+  // Sorted time keys
+  const allMonthsSet = new Set(), allQuartersSet = new Set(), allWeeksSet = new Set(), allYearsSet = new Set();
+  Object.values(monthly).forEach(r => Object.keys(r).forEach(k => { allMonthsSet.add(k); allYearsSet.add(k.slice(0,4)); }));
+  Object.values(quarterly).forEach(r => Object.keys(r).forEach(k => allQuartersSet.add(k)));
+  Object.values(weekly).forEach(r => Object.keys(r).forEach(k => allWeeksSet.add(k)));
+
+  G.allMonths    = [...allMonthsSet].sort();
+  G.allQuarters  = [...allQuartersSet].sort();
+  G.allWeeks     = [...allWeeksSet].sort();
+  G.allYears     = [...allYearsSet].sort();
+
+  // Stats
+  const countries = Object.keys(countryTotals).sort((a,b) => countryTotals[b]-countryTotals[a]);
+  const dateMin = G.allMonths[0] || '—';
+  const dateMax = G.allMonths[G.allMonths.length-1] || '—';
+
+  document.getElementById('s-countries').textContent = countries.length;
+  document.getElementById('s-range').textContent = `${dateMin} → ${dateMax}`;
+  document.getElementById('s-records').textContent = parsed.toLocaleString();
+  document.getElementById('s-peak').textContent = peakDAU.toLocaleString();
+  document.getElementById('s-file').textContent = filename;
+
+  // Populate selects
+  const dCountryEl = document.getElementById('d-country');
+  dCountryEl.innerHTML = countries.map(c => `<option value="${esc(c)}">${c}</option>`).join('');
+
+  const dYearEl = document.getElementById('d-year');
+  const wYearEl = document.getElementById('w-year');
+  G.allYears.forEach(y => {
+    dYearEl.innerHTML += `<option value="${y}">${y}</option>`;
+    wYearEl.innerHTML += `<option value="${y}">${y}</option>`;
+  });
+  dYearEl.value = G.allYears[G.allYears.length-1];
+  wYearEl.value = G.allYears[G.allYears.length-1];
+
+  // Initial render
+  renderMonthly();
+  renderQuarterly();
+  renderWeekly();
+  renderDaily();
+
+  // Show dashboard
+  document.getElementById('progress-zone').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  setupControls();
+}
+
+// ═══════════════════════════════════════════════════════
+// COLOR
+// ═══════════════════════════════════════════════════════
+
+function dauColor(val, maxVal) {
+  if (!val || !maxVal) return '#111118';
+  const t = Math.min(val / maxVal, 1);
+  // Dark blue → cyan gradient (game analytics style)
+  const r = Math.round(10  + t * 30);
+  const g = Math.round(20  + t * 160);
+  const b = Math.round(60  + t * 195);
+  return `rgb(${r},${g},${b})`;
+}
+
+function makeLegend(containerId, maxVal) {
+  const el = document.getElementById(containerId);
+  const steps = 8;
+  let html = '<span class="legend-label">Low</span><div class="legend-bar">';
+  for (let i = 0; i < steps; i++) {
+    html += `<div class="legend-seg" style="background:${dauColor(i/steps*maxVal, maxVal)}"></div>`;
+  }
+  html += `</div><span class="legend-label">High (${fmtNum(maxVal)})</span>`;
+  el.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER HELPERS
+// ═══════════════════════════════════════════════════════
+
+function esc(s) { return s.replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function fmtNum(n) {
+  if (n >= 1e6) return (n/1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
+  return n.toLocaleString();
+}
+
+function topCountries(n) {
+  const sorted = Object.keys(G.countryTotals).sort((a,b) => G.countryTotals[b]-G.countryTotals[a]);
+  return n > 0 ? sorted.slice(0, n) : sorted;
+}
+
+function filteredCountries(topN, search) {
+  let list = topCountries(topN === 0 ? 999 : topN * 3); // get more, then filter
+  if (search) list = list.filter(c => c.toLowerCase().includes(search.toLowerCase()));
+  return topN > 0 ? list.slice(0, topN) : list;
+}
+
+function renderTable(tableId, countries, periods, getData, scale, legendId) {
+  const table = document.getElementById(tableId);
+
+  // Compute maxes
+  let globalMax = 0;
+  const localMax = {};
+  countries.forEach(c => {
+    let cm = 0;
+    periods.forEach(p => { const v = getData(c, p); if (v > globalMax) globalMax = v; if (v > cm) cm = v; });
+    localMax[c] = cm;
+  });
+
+  // Label formatter for period columns
+  const labelPeriod = p => {
+    if (/^\d{4}-\d{2}$/.test(p)) {
+      const [y, m] = p.split('-');
+      return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1] + ' ' + y.slice(2);
+    }
+    return p.replace(/^\d{4}-/, '');
+  };
+
+  // Cap columns for performance
+  const cols = periods.length > 120 ? periods.slice(-120) : periods;
+
+  let html = '<thead><tr><th class="row-h">Country</th>';
+  cols.forEach(p => html += `<th>${labelPeriod(p)}</th>`);
+  html += '</tr></thead><tbody>';
+
+  countries.forEach(c => {
+    const mx = scale === 'local' ? localMax[c] : globalMax;
+    html += `<tr><td class="country-cell">${esc(c)}</td>`;
+    cols.forEach(p => {
+      const v = getData(c, p);
+      if (!v) {
+        html += `<td class="empty">—</td>`;
+      } else {
+        const bg = dauColor(v, mx || 1);
+        html += `<td style="background:${bg}" data-tip="${esc(c)} · ${p}|${fmtNum(v)}">${fmtNum(v)}</td>`;
+      }
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody>';
+  table.innerHTML = html;
+
+  // Tooltips
+  table.querySelectorAll('td[data-tip]').forEach(td => addTip(td, td.dataset.tip));
+
+  if (legendId) makeLegend(legendId, scale === 'local' ? globalMax : globalMax);
+}
+
+// ═══════════════════════════════════════════════════════
+// MONTHLY
+// ═══════════════════════════════════════════════════════
+
+function renderMonthly() {
+  const topN  = +document.getElementById('m-topN').value;
+  const search = document.getElementById('m-search').value;
+  const countries = filteredCountries(topN, search);
+  const scale = G.scales.monthly;
+  renderTable('monthly-table', countries, G.allMonths,
+    (c, p) => (G.monthly[c] || {})[p] || 0,
+    scale, 'monthly-legend');
+}
+
+// ═══════════════════════════════════════════════════════
+// QUARTERLY
+// ═══════════════════════════════════════════════════════
+
+function renderQuarterly() {
+  const topN   = +document.getElementById('q-topN').value;
+  const search  = document.getElementById('q-search').value;
+  const countries = filteredCountries(topN, search);
+  const scale = G.scales.quarterly;
+  renderTable('quarterly-table', countries, G.allQuarters,
+    (c, p) => (G.quarterly[c] || {})[p] || 0,
+    scale, 'quarterly-legend');
+}
+
+// ═══════════════════════════════════════════════════════
+// WEEKLY
+// ═══════════════════════════════════════════════════════
+
+function renderWeekly() {
+  const topN  = +document.getElementById('w-topN').value;
+  const year  = document.getElementById('w-year').value;
+  const countries = topCountries(topN);
+  const weeks = G.allWeeks.filter(w => w.startsWith(year + '-W'));
+  renderTable('weekly-table', countries, weeks,
+    (c, p) => (G.weekly[c] || {})[p] || 0,
+    'global', 'weekly-legend');
+}
+
+// ═══════════════════════════════════════════════════════
+// DAILY — CALENDAR HEATMAP
+// ═══════════════════════════════════════════════════════
+
+function renderDaily() {
+  const country = document.getElementById('d-country').value;
+  const year    = +document.getElementById('d-year').value;
+  const data    = G.daily[country] || {};
+
+  // Find max for this country/year
+  let maxVal = 0;
+  Object.entries(data).forEach(([k,v]) => {
+    if (k.startsWith(year + '-') && v > maxVal) maxVal = v;
+  });
+
+  const wrap = document.getElementById('cal-wrap');
+
+  // Build GitHub-style calendar
+  const jan1 = new Date(year, 0, 1);
+  const dec31 = new Date(year, 11, 31);
+  const startOffset = jan1.getDay(); // 0=Sun
+
+  // Group by week columns
+  const totalDays = Math.floor((dec31 - jan1) / 86400000) + 1;
+  const weeks = [];
+  let week = new Array(startOffset).fill(null);
+
+  for (let di = 0; di < totalDays; di++) {
+    const dt = new Date(year, 0, 1 + di);
+    const mo2 = String(dt.getMonth()+1).padStart(2,'0');
+    const d2  = String(dt.getDate()).padStart(2,'0');
+    const key = `${year}-${mo2}-${d2}`;
+    week.push({ key, dt, val: data[key] || 0 });
+    if (week.length === 7) { weeks.push(week); week = []; }
+  }
+  if (week.length) { while (week.length<7) week.push(null); weeks.push(week); }
+
+  // Month labels
+  const monthStarts = {};
+  weeks.forEach((wk, wi) => {
+    wk.forEach(cell => {
+      if (!cell) return;
+      if (cell.dt.getDate() <= 7) {
+        const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][cell.dt.getMonth()];
+        if (!Object.values(monthStarts).includes(mo)) monthStarts[wi] = mo;
+      }
+    });
+  });
+
+  const DOW = ['S','M','T','W','T','F','S'];
+
+  let html = `<div style="display:flex;gap:4px;align-items:flex-start">`;
+  // Day-of-week labels
+  html += `<div style="display:flex;flex-direction:column;gap:3px;margin-top:22px;margin-right:2px;">`;
+  DOW.forEach(d => html += `<div class="cal-dw">${d}</div>`);
+  html += `</div>`;
+
+  // Week columns with month labels
+  html += `<div>`;
+  html += `<div style="display:flex;gap:3px;margin-bottom:4px;min-height:18px;">`;
+  weeks.forEach((_, wi) => {
+    html += `<div style="width:14px;font-size:0.62rem;color:var(--muted);white-space:nowrap;overflow:visible;">`;
+    html += monthStarts[wi] || '';
+    html += `</div>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="cal-grid">`;
+  weeks.forEach(wk => {
+    html += `<div class="cal-col">`;
+    wk.forEach(cell => {
+      if (!cell) {
+        html += `<div class="cal-cell" style="background:transparent"></div>`;
+      } else {
+        const bg = cell.val > 0 ? dauColor(cell.val, maxVal || 1) : '#111118';
+        html += `<div class="cal-cell" style="background:${bg}" data-tip="${esc(country)} · ${cell.key}|${fmtNum(cell.val)}"></div>`;
+      }
+    });
+    html += `</div>`;
+  });
+  html += `</div></div></div>`;
+
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('[data-tip]').forEach(el => addTip(el, el.dataset.tip));
+  if (maxVal > 0) makeLegend('daily-legend', maxVal);
+}
+
+// ═══════════════════════════════════════════════════════
+// TOOLTIP
+// ═══════════════════════════════════════════════════════
+
+const ttEl = document.getElementById('tooltip');
+const ttTitle = document.getElementById('tt-title');
+const ttVal   = document.getElementById('tt-val');
+
+function addTip(el, tipStr) {
+  const [label, val] = tipStr.split('|');
+  el.addEventListener('mouseenter', e => {
+    ttTitle.textContent = label;
+    ttVal.textContent = val;
+    ttEl.style.display = 'block';
+    moveTip(e);
+  });
+  el.addEventListener('mousemove', moveTip);
+  el.addEventListener('mouseleave', () => ttEl.style.display = 'none');
+}
+function moveTip(e) {
+  ttEl.style.left = (e.clientX + 14) + 'px';
+  ttEl.style.top  = (e.clientY - 40) + 'px';
+}
+
+// ═══════════════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════════════
+
+function setupControls() {
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Monthly controls
+  document.getElementById('m-topN').addEventListener('change', renderMonthly);
+  document.getElementById('m-search').addEventListener('input', renderMonthly);
+
+  // Quarterly controls
+  document.getElementById('q-topN').addEventListener('change', renderQuarterly);
+  document.getElementById('q-search').addEventListener('input', renderQuarterly);
+
+  // Weekly controls
+  document.getElementById('w-topN').addEventListener('change', renderWeekly);
+  document.getElementById('w-year').addEventListener('change', renderWeekly);
+
+  // Daily controls
+  document.getElementById('d-country').addEventListener('change', renderDaily);
+  document.getElementById('d-year').addEventListener('change', renderDaily);
+
+  // Scale toggles
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const forTab = btn.dataset.for;
+      document.querySelectorAll(`.toggle-btn[data-for="${forTab}"]`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      G.scales[forTab] = btn.dataset.scale;
+      if (forTab === 'monthly')   renderMonthly();
+      if (forTab === 'quarterly') renderQuarterly();
+    });
+  });
+}
+</script>
+</body>
+</html>

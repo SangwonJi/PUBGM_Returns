@@ -464,8 +464,51 @@ function parseCSV(buffer) {
 // ═══════════════════════════════════════════════════════════════
 //  FINALIZE
 // ═══════════════════════════════════════════════════════════════
+// Convert daily sums → Average Daily (A.DAU) for monthly/quarterly/weekly
+function computeAvgFromDaily(dailyData) {
+  const monthly = {}, quarterly = {}, weekly = {};
+  Object.entries(dailyData).forEach(([dkey, val]) => {
+    const parts = dkey.split('-');
+    const y = +parts[0], mo = +parts[1], d = +parts[2];
+    const mkey = `${y}-${parts[1]}`;
+    const qkey = `${y}-Q${Math.ceil(mo / 3)}`;
+    const wnum = weekNum(y, mo, d);
+    const wkey = `${y}-W${String(wnum).padStart(2, '0')}`;
+    if (!monthly[mkey])   monthly[mkey]   = { sum: 0, cnt: 0 };
+    if (!quarterly[qkey]) quarterly[qkey] = { sum: 0, cnt: 0 };
+    if (!weekly[wkey])    weekly[wkey]    = { sum: 0, cnt: 0 };
+    monthly[mkey].sum   += val; monthly[mkey].cnt++;
+    quarterly[qkey].sum += val; quarterly[qkey].cnt++;
+    weekly[wkey].sum    += val; weekly[wkey].cnt++;
+  });
+  const toAvg = obj => {
+    const r = {};
+    Object.entries(obj).forEach(([k, { sum, cnt }]) => r[k] = Math.round(sum / cnt));
+    return r;
+  };
+  return { monthly: toAvg(monthly), quarterly: toAvg(quarterly), weekly: toAvg(weekly) };
+}
+
 function finalize(gM, gQ, gW, gD, cM, cQ, cW, cD, countrySet, yearSet, peakDaily, parsed) {
   setProgress(t('rendering'), 90);
+
+  // Recompute monthly/quarterly/weekly as A.DAU (average daily) from daily data
+  const gAvg = computeAvgFromDaily(gD);
+  Object.keys(gAvg.monthly).forEach(k   => gM[k] = gAvg.monthly[k]);
+  Object.keys(gAvg.quarterly).forEach(k => gQ[k] = gAvg.quarterly[k]);
+  Object.keys(gAvg.weekly).forEach(k    => gW[k] = gAvg.weekly[k]);
+
+  // Per-country A.DAU
+  Object.keys(cD).forEach(country => {
+    const avg = computeAvgFromDaily(cD[country]);
+    if (!cM[country]) cM[country] = {};
+    if (!cQ[country]) cQ[country] = {};
+    if (!cW[country]) cW[country] = {};
+    Object.keys(avg.monthly).forEach(k   => cM[country][k] = avg.monthly[k]);
+    Object.keys(avg.quarterly).forEach(k => cQ[country][k] = avg.quarterly[k]);
+    Object.keys(avg.weekly).forEach(k    => cW[country][k] = avg.weekly[k]);
+  });
+
   Object.assign(G, {
     gMonthly: gM, gQuarterly: gQ, gWeekly: gW, gDaily: gD,
     cMonthly: cM, cQuarterly: cQ, cWeekly: cW, cDaily: cD,
@@ -636,12 +679,12 @@ function addAvgMedRows(tbody, cols, colData) {
 function makeCell(td, abs, chg, label, maxAbs) {
   if (!abs) { td.className = 'td-empty'; return null; }
   const bg = G.mode === 'change' ? changeColor(chg) : absColor(abs, maxAbs);
-  const txt = G.mode === 'change' ? (chg !== null ? fmtChg(chg) : fmtNum(abs)) : fmtNum(abs);
-  const primary = G.mode === 'change' ? (chg !== null ? fmtChg(chg) : fmtNum(abs) + ' DAU') : fmtNum(abs) + ' DAU';
-  const secondary = G.mode === 'change' ? `DAU: ${fmtNum(abs)}` : (chg !== null ? `ChG: ${fmtChg(chg)}` : '');
+  // Always show A.DAU as the cell value; color changes based on mode
+  const txt = fmtNum(abs);
+  const secondary = chg !== null ? `ChG: ${fmtChg(chg)}` : '';
   td.style.background = bg || '#151520';
   td.textContent = txt;
-  tip(td, label, primary, secondary);
+  tip(td, label, fmtNum(abs) + ' A.DAU', secondary);
   return G.mode === 'change' ? chg : abs;
 }
 

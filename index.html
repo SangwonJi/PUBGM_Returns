@@ -13,7 +13,19 @@
       padding:18px 28px 14px;border-bottom:1px solid #1e1e2a;
     }
     .header h1{font-size:1.2rem;font-weight:700;}
-    .header .logo{font-size:1.1rem;font-weight:700;color:#888;letter-spacing:-.02em;}
+    .header-right{display:flex;align-items:center;gap:12px;}
+    .logo{font-size:1.1rem;font-weight:700;color:#888;letter-spacing:-.02em;}
+
+    /* ── LANG TOGGLE ── */
+    .lang-toggle{
+      display:flex;gap:0;border:1px solid #2a2a38;border-radius:7px;overflow:hidden;
+    }
+    .lang-btn{
+      padding:4px 11px;font-size:0.73rem;font-weight:700;
+      background:transparent;border:none;color:#555;cursor:pointer;transition:all .15s;
+      letter-spacing:.03em;
+    }
+    .lang-btn.active{background:#1a1a24;color:#fff;}
 
     /* ── TABS ── */
     .tab-bar{
@@ -132,20 +144,26 @@
 
 <div class="header">
   <h1 id="page-title">DAU Daily Heatmap</h1>
-  <span class="logo">PUBGM</span>
+  <div class="header-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="ko">한</button>
+    </div>
+    <span class="logo">PUBGM</span>
+  </div>
 </div>
 
 <!-- UPLOAD -->
 <div id="upload-zone">
   <div class="drop-box" id="drop-box">
     <div class="drop-icon">📊</div>
-    <h2>Drop your CSV file here</h2>
-    <p>Tab-separated or comma-separated.<br>UTF-16 / UTF-8 auto-detected.</p>
+    <h2 data-i18n="upload_title">Drop your CSV file here</h2>
+    <p data-i18n="upload_desc">Tab-separated or comma-separated.<br>UTF-16 / UTF-8 auto-detected.</p>
     <code>date &nbsp;·&nbsp; country &nbsp;·&nbsp; DAU</code><br/>
-    <button class="btn-upload" onclick="document.getElementById('file-input').click()">Choose File</button>
+    <button class="btn-upload" id="btn-choose" onclick="document.getElementById('file-input').click()" data-i18n="upload_btn">Choose File</button>
     <input type="file" id="file-input" accept=".csv,.tsv,.txt"/>
   </div>
-  <p class="hint-txt">Date formats: YYYY. M. D. &nbsp;|&nbsp; YYYY-MM-DD &nbsp;|&nbsp; MM/DD/YYYY</p>
+  <p class="hint-txt" data-i18n="upload_hint">Date formats: YYYY. M. D. &nbsp;|&nbsp; YYYY-MM-DD &nbsp;|&nbsp; MM/DD/YYYY</p>
 </div>
 
 <!-- PROGRESS -->
@@ -157,45 +175,36 @@
 <!-- DASHBOARD -->
 <div id="dashboard">
   <div class="stats-row">
-    <div class="stat"><div class="sl">Countries</div><div class="sv" id="s-countries">—</div></div>
-    <div class="stat"><div class="sl">Date Range</div><div class="sv" id="s-range">—</div></div>
-    <div class="stat"><div class="sl">Records</div><div class="sv" id="s-records">—</div></div>
-    <div class="stat"><div class="sl">Peak Daily DAU</div><div class="sv" id="s-peak">—</div></div>
+    <div class="stat"><div class="sl" data-i18n="stat_countries">Countries</div><div class="sv" id="s-countries">—</div></div>
+    <div class="stat"><div class="sl" data-i18n="stat_range">Date Range</div><div class="sv" id="s-range">—</div></div>
+    <div class="stat"><div class="sl" data-i18n="stat_records">Records</div><div class="sv" id="s-records">—</div></div>
+    <div class="stat"><div class="sl" data-i18n="stat_peak">Peak Daily DAU</div><div class="sv" id="s-peak">—</div></div>
   </div>
 
-  <!-- Global controls -->
   <div class="global-ctrl">
-    <span class="ctrl-label">View</span>
+    <span class="ctrl-label" data-i18n="ctrl_view">View</span>
     <select id="sel-country">
-      <option value="__global__">🌐 Global (All Countries)</option>
+      <option value="__global__" data-i18n="global_opt">🌐 Global (All Countries)</option>
     </select>
-    <span class="ctrl-label" style="margin-left:6px">Mode</span>
+    <span class="ctrl-label" style="margin-left:6px" data-i18n="ctrl_mode">Mode</span>
     <div class="mode-wrap">
-      <button class="mode-btn active" data-mode="change">% Change</button>
-      <button class="mode-btn" data-mode="abs">Absolute DAU</button>
+      <button class="mode-btn active" data-mode="change" data-i18n="mode_change">% Change</button>
+      <button class="mode-btn" data-mode="abs" data-i18n="mode_abs">Absolute DAU</button>
     </div>
   </div>
 
-  <!-- Tab bar -->
   <div class="tab-bar">
-    <button class="tab-btn active" data-tab="daily">Daily</button>
-    <button class="tab-btn" data-tab="weekly">Weekly</button>
-    <button class="tab-btn" data-tab="monthly">Monthly</button>
-    <button class="tab-btn" data-tab="quarterly">Quarterly</button>
+    <button class="tab-btn active" data-tab="daily" data-i18n="tab_daily">Daily</button>
+    <button class="tab-btn" data-tab="weekly" data-i18n="tab_weekly">Weekly</button>
+    <button class="tab-btn" data-tab="monthly" data-i18n="tab_monthly">Monthly</button>
+    <button class="tab-btn" data-tab="quarterly" data-i18n="tab_quarterly">Quarterly</button>
   </div>
 
   <!-- DAILY -->
   <div class="tab-panel active" id="tab-daily">
     <div class="ctrl-row">
-      <span class="ctrl-label">Month</span>
-      <select id="sel-month">
-        <option value="1">January</option><option value="2">February</option>
-        <option value="3">March</option><option value="4">April</option>
-        <option value="5">May</option><option value="6">June</option>
-        <option value="7">July</option><option value="8">August</option>
-        <option value="9">September</option><option value="10">October</option>
-        <option value="11">November</option><option value="12">December</option>
-      </select>
+      <span class="ctrl-label" data-i18n="ctrl_month">Month</span>
+      <select id="sel-month"></select>
     </div>
     <div class="tbl-wrap"><table id="tbl-daily"></table></div>
   </div>
@@ -220,6 +229,132 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════════
+//  I18N
+// ═══════════════════════════════════════════════════════════════
+let LANG = 'en';
+
+const T = {
+  en: {
+    upload_title:   'Drop your CSV file here',
+    upload_desc:    'Tab-separated or comma-separated.<br>UTF-16 / UTF-8 auto-detected.',
+    upload_btn:     'Choose File',
+    upload_hint:    'Date formats: YYYY. M. D. &nbsp;|&nbsp; YYYY-MM-DD &nbsp;|&nbsp; MM/DD/YYYY',
+    stat_countries: 'Countries',
+    stat_range:     'Date Range',
+    stat_records:   'Records',
+    stat_peak:      'Peak Daily DAU',
+    ctrl_view:      'View',
+    ctrl_mode:      'Mode',
+    ctrl_month:     'Month',
+    global_opt:     '🌐 Global (All Countries)',
+    mode_change:    '% Change',
+    mode_abs:       'Absolute DAU',
+    tab_daily:      'Daily',
+    tab_weekly:     'Weekly',
+    tab_monthly:    'Monthly',
+    tab_quarterly:  'Quarterly',
+    title_daily:    'DAU Daily Heatmap',
+    title_weekly:   'DAU Weekly Heatmap',
+    title_monthly:  'DAU Monthly Heatmap',
+    title_quarterly:'DAU Quarterly Heatmap',
+    col_time:       'Time',
+    row_avg:        'Average',
+    row_med:        'Median',
+    no_data:        'No data loaded',
+    reading:        'Reading file…',
+    decoding:       'Decoding…',
+    rendering:      'Rendering…',
+    months_short:   ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    months_long:    ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    week_suffix:    (n) => { const s=['th','st','nd','rd']; const v=n%100; return n+(s[(v-20)%10]||s[v]||s[0])+' week'; },
+    dau_label:      'DAU',
+    chg_labels:     { month:'MoM', quarter:'QoQ', week:'WoW', day:'DoD' },
+  },
+  ko: {
+    upload_title:   'CSV 파일을 드래그하여 놓으세요',
+    upload_desc:    '탭 또는 쉼표 구분자.<br>UTF-16 / UTF-8 자동 감지.',
+    upload_btn:     '파일 선택',
+    upload_hint:    '날짜 형식: YYYY. M. D. &nbsp;|&nbsp; YYYY-MM-DD &nbsp;|&nbsp; MM/DD/YYYY',
+    stat_countries: '국가 수',
+    stat_range:     '날짜 범위',
+    stat_records:   '레코드 수',
+    stat_peak:      '최대 일별 DAU',
+    ctrl_view:      '보기',
+    ctrl_mode:      '모드',
+    ctrl_month:     '월',
+    global_opt:     '🌐 전체 국가',
+    mode_change:    '% 변화',
+    mode_abs:       'DAU 절대값',
+    tab_daily:      '일별',
+    tab_weekly:     '주별',
+    tab_monthly:    '월별',
+    tab_quarterly:  '분기별',
+    title_daily:    'DAU 일별 히트맵',
+    title_weekly:   'DAU 주별 히트맵',
+    title_monthly:  'DAU 월별 히트맵',
+    title_quarterly:'DAU 분기별 히트맵',
+    col_time:       '기간',
+    row_avg:        '평균',
+    row_med:        '중앙값',
+    no_data:        '데이터 없음',
+    reading:        '파일 읽는 중…',
+    decoding:       '디코딩 중…',
+    rendering:      '렌더링 중…',
+    months_short:   ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+    months_long:    ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+    week_suffix:    (n) => `${n}주차`,
+    dau_label:      'DAU',
+    chg_labels:     { month:'MoM', quarter:'QoQ', week:'WoW', day:'DoD' },
+  },
+};
+
+function t(key) { return T[LANG][key] || T.en[key] || key; }
+
+// Apply language to all [data-i18n] elements (static text)
+function applyLang() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    const val = t(key);
+    if (el.tagName === 'P' || el.tagName === 'H2') el.innerHTML = val;
+    else el.textContent = val;
+  });
+  // Rebuild month selector
+  buildMonthSelector();
+  // Re-render if data is loaded
+  if (G.years.length) renderAll();
+}
+
+function buildMonthSelector() {
+  const sel = document.getElementById('sel-month');
+  const current = sel.value || '1';
+  sel.innerHTML = '';
+  T[LANG].months_long.forEach((name, i) => {
+    const o = document.createElement('option');
+    o.value = i + 1;
+    o.textContent = name;
+    sel.appendChild(o);
+  });
+  sel.value = current;
+}
+
+// Lang toggle
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.lang === LANG) return;
+    LANG = btn.dataset.lang;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyLang();
+    // Update page title based on active tab
+    const activeTab = document.querySelector('.tab-btn.active');
+    if (activeTab) {
+      const tab = activeTab.dataset.tab;
+      document.getElementById('page-title').textContent = t('title_' + tab);
+    }
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════════════════════════════
 const G = {
@@ -228,9 +363,9 @@ const G = {
   countries:[], years:[], mode:'change',
 };
 
-const TITLES = {
-  daily:'DAU Daily Heatmap', weekly:'DAU Weekly Heatmap',
-  monthly:'DAU Monthly Heatmap', quarterly:'DAU Quarterly Heatmap',
+const TAB_TITLE_KEY = {
+  daily:'title_daily', weekly:'title_weekly',
+  monthly:'title_monthly', quarterly:'title_quarterly',
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -244,7 +379,7 @@ dropBox.addEventListener('drop', e => { e.preventDefault(); dropBox.classList.re
 
 function handleFile(file) {
   if (!file) return;
-  setProgress('Reading file…', 2);
+  setProgress(t('reading'), 2);
   const r = new FileReader();
   r.onload = e => parseCSV(e.target.result);
   r.readAsArrayBuffer(file);
@@ -276,7 +411,7 @@ function weekNum(y, mo, d) {
 }
 
 function parseCSV(buffer) {
-  setProgress('Decoding…', 8);
+  setProgress(t('decoding'), 8);
   const u8 = new Uint8Array(buffer);
   let text;
   if (u8[0] === 0xFF && u8[1] === 0xFE) text = new TextDecoder('utf-16le').decode(buffer);
@@ -319,7 +454,7 @@ function parseCSV(buffer) {
       incC(cM, country, mkey, dau); incC(cQ, country, qkey, dau);
       incC(cW, country, wkey, dau); incC(cD, country, dkey, dau);
     }
-    setProgress(`Parsing… ${Math.round(i / total * 100)}%`, 8 + Math.round((i / total) * 75));
+    setProgress(`${LANG === 'ko' ? '파싱 중' : 'Parsing'} ${Math.round(i / total * 100)}%`, 8 + Math.round((i / total) * 75));
     if (i < total) { setTimeout(processChunk, 0); }
     else finalize(gM, gQ, gW, gD, cM, cQ, cW, cD, countrySet, yearSet, peakDaily, parsed);
   }
@@ -330,7 +465,7 @@ function parseCSV(buffer) {
 //  FINALIZE
 // ═══════════════════════════════════════════════════════════════
 function finalize(gM, gQ, gW, gD, cM, cQ, cW, cD, countrySet, yearSet, peakDaily, parsed) {
-  setProgress('Rendering…', 90);
+  setProgress(t('rendering'), 90);
   Object.assign(G, {
     gMonthly: gM, gQuarterly: gQ, gWeekly: gW, gDaily: gD,
     cMonthly: cM, cQuarterly: cQ, cWeekly: cW, cDaily: cD,
@@ -348,12 +483,16 @@ function finalize(gM, gQ, gW, gD, cM, cQ, cW, cD, countrySet, yearSet, peakDaily
   document.getElementById('s-records').textContent = parsed.toLocaleString();
   document.getElementById('s-peak').textContent = fmtNum(peakDaily);
 
+  // Country selector (keep global option, add countries)
   const sel = document.getElementById('sel-country');
+  // Remove old country options (keep first = global)
+  while (sel.options.length > 1) sel.remove(1);
   G.countries.forEach(c => {
     const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o);
   });
   sel.addEventListener('change', renderAll);
 
+  // Mode toggle
   document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
@@ -363,16 +502,18 @@ function finalize(gM, gQ, gW, gD, cM, cQ, cW, cD, countrySet, yearSet, peakDaily
     });
   });
 
+  // Tab switching
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-      document.getElementById('page-title').textContent = TITLES[btn.dataset.tab];
+      document.getElementById('page-title').textContent = t(TAB_TITLE_KEY[btn.dataset.tab]);
     });
   });
 
+  // Month selector
   document.getElementById('sel-month').addEventListener('change', function () {
     renderDaily(+this.value);
   });
@@ -401,14 +542,14 @@ function getData(type) {
 // ═══════════════════════════════════════════════════════════════
 function changeColor(val) {
   if (val === null || val === undefined || isNaN(val)) return null;
-  const t = Math.min(Math.abs(val) / 40, 1);
-  const s = Math.round(35 + t * 60), l = Math.round(18 + t * 22);
+  const t2 = Math.min(Math.abs(val) / 40, 1);
+  const s = Math.round(35 + t2 * 60), l = Math.round(18 + t2 * 22);
   return val >= 0 ? `hsl(142,${s}%,${l}%)` : `hsl(0,${s}%,${l}%)`;
 }
 function absColor(val, maxVal) {
   if (!val || !maxVal) return null;
-  const t = Math.min(val / maxVal, 1);
-  const s = Math.round(35 + t * 60), l = Math.round(18 + t * 22);
+  const t2 = Math.min(val / maxVal, 1);
+  const s = Math.round(35 + t2 * 60), l = Math.round(18 + t2 * 22);
   return `hsl(142,${s}%,${l}%)`;
 }
 
@@ -451,11 +592,8 @@ function moveTip(e) { ttEl.style.left = (e.clientX + 14) + 'px'; ttEl.style.top 
 // ═══════════════════════════════════════════════════════════════
 //  HELPERS
 // ═══════════════════════════════════════════════════════════════
-function ord(n) {
-  const s = ['th', 'st', 'nd', 'rd'];
-  const v = n % 100;
-  return n + (s[(v - 20) % 10] || s[v] || s[0]) + ' week';
-}
+function weekLabel(n) { return T[LANG].week_suffix(n); }
+
 function avgOf(arr) {
   const v = arr.filter(x => x !== null && x !== undefined && !isNaN(x));
   return v.length ? +(v.reduce((a, b) => a + b, 0) / v.length).toFixed(2) : null;
@@ -467,7 +605,6 @@ function medOf(arr) {
   return +(v.length % 2 ? v[mid] : (v[mid - 1] + v[mid]) / 2).toFixed(2);
 }
 
-// Build chgMap: chronological change for each key
 function buildChgMap(data, sortedKeys) {
   const chgMap = {};
   sortedKeys.forEach((k, i) => {
@@ -478,11 +615,9 @@ function buildChgMap(data, sortedKeys) {
   return chgMap;
 }
 
-// Add Average + Median rows to a table body
-// colData[col] = array of values (chg or abs depending on mode)
 function addAvgMedRows(tbody, cols, colData) {
   const avgTr = tbody.insertRow(); avgTr.className = 'tr-avg';
-  const ayt = avgTr.insertCell(); ayt.className = 'td-year'; ayt.textContent = 'Average';
+  const ayt = avgTr.insertCell(); ayt.className = 'td-year'; ayt.textContent = t('row_avg');
   cols.forEach(col => {
     const td = avgTr.insertCell();
     const v = avgOf(colData[col] || []);
@@ -490,7 +625,7 @@ function addAvgMedRows(tbody, cols, colData) {
   });
 
   const medTr = tbody.insertRow(); medTr.className = 'tr-med';
-  const myt = medTr.insertCell(); myt.className = 'td-year'; myt.textContent = 'Median';
+  const myt = medTr.insertCell(); myt.className = 'td-year'; myt.textContent = t('row_med');
   cols.forEach(col => {
     const td = medTr.insertCell();
     const v = medOf(colData[col] || []);
@@ -498,7 +633,6 @@ function addAvgMedRows(tbody, cols, colData) {
   });
 }
 
-// Render a single data cell
 function makeCell(td, abs, chg, label, maxAbs) {
   if (!abs) { td.className = 'td-empty'; return null; }
   const bg = G.mode === 'change' ? changeColor(chg) : absColor(abs, maxAbs);
@@ -525,7 +659,7 @@ function renderQuarterly() {
 
   const thead = tbl.createTHead();
   const hr = thead.insertRow();
-  ['Time', 'Q1', 'Q2', 'Q3', 'Q4'].forEach((h, i) => {
+  [t('col_time'), 'Q1', 'Q2', 'Q3', 'Q4'].forEach((h, i) => {
     const th = document.createElement('th'); th.textContent = h;
     if (i === 0) th.className = 'th-time'; hr.appendChild(th);
   });
@@ -552,7 +686,7 @@ function renderQuarterly() {
 // ═══════════════════════════════════════════════════════════════
 function renderMonthly() {
   const data = getData('monthly');
-  const MSHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const MS = T[LANG].months_short;
   const tbl = document.getElementById('tbl-monthly');
   tbl.innerHTML = '';
 
@@ -562,7 +696,7 @@ function renderMonthly() {
 
   const thead = tbl.createTHead();
   const hr = thead.insertRow();
-  ['Time', ...MSHORT].forEach((h, i) => {
+  [t('col_time'), ...MS].forEach((h, i) => {
     const th = document.createElement('th'); th.textContent = h;
     if (i === 0) th.className = 'th-time'; hr.appendChild(th);
   });
@@ -577,7 +711,8 @@ function renderMonthly() {
     for (let mo = 1; mo <= 12; mo++) {
       const td = tr.insertCell();
       const key = `${y}-${String(mo).padStart(2, '0')}`;
-      const v = makeCell(td, data[key], chgMap[key] !== undefined ? chgMap[key] : null, `${y} ${MSHORT[mo - 1]}`, maxAbs);
+      const label = `${y} ${T[LANG].months_long[mo - 1]}`;
+      const v = makeCell(td, data[key], chgMap[key] !== undefined ? chgMap[key] : null, label, maxAbs);
       if (v !== null) colData[mo].push(v);
     }
   });
@@ -586,26 +721,27 @@ function renderMonthly() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  RENDER: WEEKLY  (all years × all weeks — CoinGlass style)
+//  RENDER: WEEKLY  (all years × all weeks)
 // ═══════════════════════════════════════════════════════════════
 function renderWeekly() {
   const data = getData('weekly');
   const tbl = document.getElementById('tbl-weekly');
   tbl.innerHTML = '';
 
-  // Find max week number present in data
   let maxWeek = 0;
   Object.keys(data).forEach(k => {
     const m = k.match(/-W(\d+)$/);
     if (m) maxWeek = Math.max(maxWeek, +m[1]);
   });
-  if (!maxWeek) { tbl.innerHTML = '<tr><td style="color:#444;padding:20px">No data loaded</td></tr>'; return; }
+  if (!maxWeek) {
+    tbl.innerHTML = `<tr><td style="color:#444;padding:20px">${t('no_data')}</td></tr>`;
+    return;
+  }
   const cols = Array.from({ length: maxWeek }, (_, i) => i + 1);
 
   const allAbs = Object.values(data).filter(Boolean);
   const maxAbs = Math.max(...allAbs, 1);
 
-  // Compute WoW changes per year (week N vs week N-1 in same year)
   const chgGrid = {}, absGrid = {};
   G.years.forEach(y => {
     chgGrid[y] = {}; absGrid[y] = {};
@@ -625,9 +761,9 @@ function renderWeekly() {
 
   const thead = tbl.createTHead();
   const hr = thead.insertRow();
-  const th0 = document.createElement('th'); th0.textContent = 'Time'; th0.className = 'th-time'; hr.appendChild(th0);
+  const th0 = document.createElement('th'); th0.textContent = t('col_time'); th0.className = 'th-time'; hr.appendChild(th0);
   cols.forEach(w => {
-    const th = document.createElement('th'); th.textContent = ord(w); hr.appendChild(th);
+    const th = document.createElement('th'); th.textContent = weekLabel(w); hr.appendChild(th);
   });
 
   const tbody = tbl.createTBody();
@@ -639,7 +775,8 @@ function renderWeekly() {
     const ytd = tr.insertCell(); ytd.className = 'td-year'; ytd.textContent = y;
     cols.forEach(w => {
       const td = tr.insertCell();
-      const v = makeCell(td, absGrid[y][w], chgGrid[y][w], `${y} Week ${w}`, maxAbs);
+      const label = LANG === 'ko' ? `${y}년 ${weekLabel(w)}` : `${y} Week ${w}`;
+      const v = makeCell(td, absGrid[y][w], chgGrid[y][w], label, maxAbs);
       if (v !== null) colData[w].push(v);
     });
   });
@@ -648,19 +785,20 @@ function renderWeekly() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  RENDER: DAILY  (all years × days in month — CoinGlass style)
+//  RENDER: DAILY  (all years × days in month)
 // ═══════════════════════════════════════════════════════════════
 function renderDaily(month) {
   const data = getData('daily');
-  const MNAMES = ['', 'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'];
+  const ML = T[LANG].months_long;
   const mm = String(month).padStart(2, '0');
   const tbl = document.getElementById('tbl-daily');
   tbl.innerHTML = '';
 
-  if (!G.years.length) { tbl.innerHTML = '<tr><td style="color:#444;padding:20px">No data loaded</td></tr>'; return; }
+  if (!G.years.length) {
+    tbl.innerHTML = `<tr><td style="color:#444;padding:20px">${t('no_data')}</td></tr>`;
+    return;
+  }
 
-  // Max days in this month across all years
   const maxDays = Math.max(...G.years.map(y => new Date(y, month, 0).getDate()));
   const cols = Array.from({ length: maxDays }, (_, i) => i + 1);
 
@@ -668,7 +806,6 @@ function renderDaily(month) {
   const allAbs = monthKeys.map(k => data[k]).filter(Boolean);
   const maxAbs = Math.max(...allAbs, 1);
 
-  // Compute DoD changes per year for this month (day N vs day N-1 in same month)
   const chgGrid = {}, absGrid = {};
   G.years.forEach(y => {
     chgGrid[y] = {}; absGrid[y] = {};
@@ -689,7 +826,7 @@ function renderDaily(month) {
 
   const thead = tbl.createTHead();
   const hr = thead.insertRow();
-  const th0 = document.createElement('th'); th0.textContent = 'Time'; th0.className = 'th-time'; hr.appendChild(th0);
+  const th0 = document.createElement('th'); th0.textContent = t('col_time'); th0.className = 'th-time'; hr.appendChild(th0);
   cols.forEach(d => {
     const th = document.createElement('th');
     th.textContent = `${mm}-${String(d).padStart(2, '0')}`;
@@ -707,7 +844,10 @@ function renderDaily(month) {
     cols.forEach(d => {
       const td = tr.insertCell();
       if (d > nDays) { td.className = 'td-empty'; return; }
-      const v = makeCell(td, absGrid[y][d], chgGrid[y][d], `${y} ${MNAMES[month]} ${d}`, maxAbs);
+      const label = LANG === 'ko'
+        ? `${y}년 ${ML[month - 1]} ${d}일`
+        : `${y} ${ML[month - 1]} ${d}`;
+      const v = makeCell(td, absGrid[y][d], chgGrid[y][d], label, maxAbs);
       if (v !== null) colData[d].push(v);
     });
   });
@@ -724,6 +864,9 @@ function renderAll() {
   renderWeekly();
   renderDaily(+document.getElementById('sel-month').value);
 }
+
+// ── INIT ── build month selector on load
+buildMonthSelector();
 </script>
 </body>
 </html>

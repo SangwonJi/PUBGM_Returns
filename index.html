@@ -679,12 +679,15 @@ function addAvgMedRows(tbody, cols, colData) {
 function makeCell(td, abs, chg, label, maxAbs) {
   if (!abs) { td.className = 'td-empty'; return null; }
   const bg = G.mode === 'change' ? changeColor(chg) : absColor(abs, maxAbs);
-  // Always show A.DAU as the cell value; color changes based on mode
-  const txt = fmtNum(abs);
-  const secondary = chg !== null ? `ChG: ${fmtChg(chg)}` : '';
+  // % Change mode: show % value / Absolute mode: show A.DAU value
+  const txt = G.mode === 'change'
+    ? (chg !== null ? fmtChg(chg) : '—')
+    : fmtNum(abs);
+  const primary   = G.mode === 'change' ? (chg !== null ? fmtChg(chg) : '—') : fmtNum(abs) + ' A.DAU';
+  const secondary = G.mode === 'change' ? `A.DAU: ${fmtNum(abs)}` : (chg !== null ? `ChG: ${fmtChg(chg)}` : '');
   td.style.background = bg || '#151520';
   td.textContent = txt;
-  tip(td, label, fmtNum(abs) + ' A.DAU', secondary);
+  tip(td, label, primary, secondary);
   return G.mode === 'change' ? chg : abs;
 }
 

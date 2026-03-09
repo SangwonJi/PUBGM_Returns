@@ -138,7 +138,16 @@
     ::-webkit-scrollbar{height:5px;width:5px;}
     ::-webkit-scrollbar-track{background:#0f1015;}
     ::-webkit-scrollbar-thumb{background:#2a2a38;border-radius:3px;}
+
+    .chart-section{padding:14px 28px 0;}
+    .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+    .chart-range-btns{display:flex;gap:0;border:1px solid #2a2a38;border-radius:7px;overflow:hidden;}
+    .range-btn{padding:5px 14px;font-size:0.75rem;font-weight:600;background:transparent;border:none;color:#555;cursor:pointer;transition:all .15s;}
+    .range-btn.active{background:#1a1a24;color:#fff;}
+    .range-btn:hover{color:#aaa;}
+    .chart-wrap{background:#111118;border:1px solid #1e1e2a;border-radius:10px;padding:16px;height:320px;position:relative;}
   </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 <body>
 
@@ -190,6 +199,27 @@
     <div class="mode-wrap">
       <button class="mode-btn active" data-mode="change" data-i18n="mode_change">% Change</button>
       <button class="mode-btn" data-mode="abs" data-i18n="mode_abs">Absolute DAU</button>
+    </div>
+  </div>
+
+  <div class="chart-section">
+    <div class="chart-header">
+      <div style="display:flex;align-items:baseline;gap:10px;">
+        <span style="font-size:0.88rem;color:#bbb;font-weight:600;" data-i18n="chart_title">DAU Trend</span>
+        <span id="chart-start-val" style="font-size:0.72rem;color:#666;"></span>
+        <span id="chart-arrow" style="font-size:0.72rem;color:#444;">→</span>
+        <span id="chart-end-val" style="font-size:0.72rem;font-weight:600;"></span>
+      </div>
+      <div class="chart-range-btns">
+        <button class="range-btn" data-range="1d" data-i18n="range_1d">1 Day</button>
+        <button class="range-btn" data-range="1w" data-i18n="range_1w">1 Week</button>
+        <button class="range-btn" data-range="1m" data-i18n="range_1m">1 Month</button>
+        <button class="range-btn" data-range="1y" data-i18n="range_1y">1 Year</button>
+        <button class="range-btn active" data-range="all" data-i18n="range_all">All</button>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="dau-chart"></canvas>
     </div>
   </div>
 
@@ -269,6 +299,12 @@ const T = {
     week_suffix:    (n) => { const s=['th','st','nd','rd']; const v=n%100; return n+(s[(v-20)%10]||s[v]||s[0])+' week'; },
     dau_label:      'DAU',
     chg_labels:     { month:'MoM', quarter:'QoQ', week:'WoW', day:'DoD' },
+    chart_title:    'DAU Trend',
+    range_1d:       '1 Day',
+    range_1w:       '1 Week',
+    range_1m:       '1 Month',
+    range_1y:       '1 Year',
+    range_all:      'All',
   },
   ko: {
     upload_title:   'CSV 파일을 드래그하여 놓으세요',
@@ -305,6 +341,12 @@ const T = {
     week_suffix:    (n) => `${n}주차`,
     dau_label:      'DAU',
     chg_labels:     { month:'MoM', quarter:'QoQ', week:'WoW', day:'DoD' },
+    chart_title:    'DAU 추이',
+    range_1d:       '1일',
+    range_1w:       '1주',
+    range_1m:       '1개월',
+    range_1y:       '1년',
+    range_all:      '전부',
   },
 };
 
@@ -585,15 +627,18 @@ function getData(type) {
 // ═══════════════════════════════════════════════════════════════
 function changeColor(val) {
   if (val === null || val === undefined || isNaN(val)) return null;
-  const t2 = Math.min(Math.abs(val) / 40, 1);
-  const s = Math.round(35 + t2 * 60), l = Math.round(18 + t2 * 22);
-  return val >= 0 ? `hsl(142,${s}%,${l}%)` : `hsl(0,${s}%,${l}%)`;
+  const intensity = Math.min(Math.abs(val) / 30, 1);
+  const hue = val >= 0 ? 142 : 0;
+  const s = Math.round(8 + intensity * 72);
+  const l = Math.round(94 - intensity * 54);
+  return { bg: `hsl(${hue},${s}%,${l}%)`, dark: intensity > 0.35 };
 }
 function absColor(val, maxVal) {
   if (!val || !maxVal) return null;
-  const t2 = Math.min(val / maxVal, 1);
-  const s = Math.round(35 + t2 * 60), l = Math.round(18 + t2 * 22);
-  return `hsl(142,${s}%,${l}%)`;
+  const intensity = Math.min(val / maxVal, 1);
+  const s = Math.round(8 + intensity * 72);
+  const l = Math.round(94 - intensity * 54);
+  return { bg: `hsl(142,${s}%,${l}%)`, dark: intensity > 0.35 };
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -678,14 +723,18 @@ function addAvgMedRows(tbody, cols, colData) {
 
 function makeCell(td, abs, chg, label, maxAbs) {
   if (!abs) { td.className = 'td-empty'; return null; }
-  const bg = G.mode === 'change' ? changeColor(chg) : absColor(abs, maxAbs);
-  // % Change mode: show % value / Absolute mode: show A.DAU value
+  const color = G.mode === 'change' ? changeColor(chg) : absColor(abs, maxAbs);
   const txt = G.mode === 'change'
     ? (chg !== null ? fmtChg(chg) : '—')
     : fmtNum(abs);
   const primary   = G.mode === 'change' ? (chg !== null ? fmtChg(chg) : '—') : fmtNum(abs) + ' A.DAU';
   const secondary = G.mode === 'change' ? `A.DAU: ${fmtNum(abs)}` : (chg !== null ? `ChG: ${fmtChg(chg)}` : '');
-  td.style.background = bg || '#151520';
+  if (color) {
+    td.style.background = color.bg;
+    td.style.color = color.dark ? '#fff' : '#222';
+  } else {
+    td.style.background = '#151520';
+  }
   td.textContent = txt;
   tip(td, label, primary, secondary);
   return G.mode === 'change' ? chg : abs;
@@ -902,6 +951,144 @@ function renderDaily(month) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+//  CHART: DAU TREND
+// ═══════════════════════════════════════════════════════════════
+let dauChart = null;
+let chartRange = 'all';
+
+function renderChart() {
+  const data = getData('daily');
+  const allKeys = Object.keys(data).sort();
+  if (!allKeys.length) {
+    if (dauChart) { dauChart.destroy(); dauChart = null; }
+    return;
+  }
+
+  let filteredKeys = allKeys;
+  if (chartRange !== 'all') {
+    const lastKey = allKeys[allKeys.length - 1];
+    const [ly, lm, ld] = lastKey.split('-').map(Number);
+    const end = new Date(ly, lm - 1, ld);
+    const dayMap = { '1d': 1, '1w': 7, '1m': 30, '1y': 365 };
+    const days = dayMap[chartRange] || 0;
+    const start = new Date(end.getTime() - days * 86400000);
+    filteredKeys = allKeys.filter(k => {
+      const [y, m, d] = k.split('-').map(Number);
+      return new Date(y, m - 1, d) >= start;
+    });
+    if (filteredKeys.length < 2) filteredKeys = allKeys.slice(-7);
+  }
+  if (filteredKeys.length < 2) return;
+
+  const values = filteredKeys.map(k => data[k]);
+  const bl = values[0];
+  const lastVal = values[values.length - 1];
+  const pctChg = bl ? ((lastVal - bl) / bl * 100) : 0;
+  const isUp = lastVal >= bl;
+
+  const labels = filteredKeys.map(k => {
+    const [y, m, d] = k.split('-');
+    if (chartRange === '1d' || chartRange === '1w' || chartRange === '1m')
+      return `${parseInt(m)}/${parseInt(d)}`;
+    return `${y.slice(2)}.${m}.${d}`;
+  });
+
+  const startEl = document.getElementById('chart-start-val');
+  const endEl = document.getElementById('chart-end-val');
+  const arrowEl = document.getElementById('chart-arrow');
+  if (startEl) startEl.textContent = fmtNum(bl);
+  if (arrowEl) arrowEl.style.display = '';
+  if (endEl) {
+    const sign = pctChg >= 0 ? '+' : '';
+    endEl.textContent = `${fmtNum(lastVal)} (${sign}${pctChg.toFixed(2)}%)`;
+    endEl.style.color = isUp ? '#4ade80' : '#f87171';
+  }
+
+  const canvas = document.getElementById('dau-chart');
+  if (dauChart) dauChart.destroy();
+
+  dauChart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          data: values,
+          borderWidth: 1.8,
+          fill: { target: { value: bl }, above: 'rgba(74,222,128,0.13)', below: 'rgba(248,113,113,0.13)' },
+          tension: 0.3,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          pointHoverBackgroundColor: '#fff',
+          segment: {
+            borderColor: ctx => (ctx.p0.parsed.y + ctx.p1.parsed.y) / 2 >= bl ? '#4ade80' : '#f87171',
+          },
+        },
+        {
+          data: values.map(() => bl),
+          borderColor: 'rgba(255,255,255,0.12)',
+          borderDash: [4, 4],
+          borderWidth: 1,
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          fill: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1e1e2e',
+          borderColor: '#2a2a3a',
+          borderWidth: 1,
+          titleColor: '#888',
+          titleFont: { size: 11 },
+          bodyColor: '#fff',
+          bodyFont: { size: 13, weight: '600' },
+          padding: 10,
+          displayColors: false,
+          filter: item => item.datasetIndex === 0,
+          callbacks: {
+            label: ctx => {
+              const v = ctx.raw;
+              const c = bl ? ((v - bl) / bl * 100).toFixed(2) : 0;
+              const s = c >= 0 ? '+' : '';
+              return `${t('dau_label')}: ${fmtNum(v)}  (${s}${c}%)`;
+            }
+          }
+        },
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.03)' },
+          ticks: { color: '#555', maxTicksLimit: 10, font: { size: 10 } },
+          border: { display: false },
+        },
+        y: {
+          position: 'right',
+          grid: { color: 'rgba(255,255,255,0.03)' },
+          ticks: { color: '#555', font: { size: 10 }, callback: v => fmtNum(v) },
+          border: { display: false },
+        }
+      }
+    },
+  });
+}
+
+document.querySelectorAll('.range-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    chartRange = btn.dataset.range;
+    renderChart();
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
 //  RENDER ALL
 // ═══════════════════════════════════════════════════════════════
 function renderAll() {
@@ -909,6 +1096,7 @@ function renderAll() {
   renderMonthly();
   renderWeekly();
   renderDaily(+document.getElementById('sel-month').value);
+  renderChart();
 }
 
 // ── INIT ── build month selector on load

@@ -627,18 +627,18 @@ function getData(type) {
 // ═══════════════════════════════════════════════════════════════
 function changeColor(val) {
   if (val === null || val === undefined || isNaN(val)) return null;
-  const intensity = Math.min(Math.abs(val) / 30, 1);
-  const hue = val >= 0 ? 142 : 0;
-  const s = Math.round(8 + intensity * 72);
-  const l = Math.round(94 - intensity * 54);
-  return { bg: `hsl(${hue},${s}%,${l}%)`, dark: intensity > 0.35 };
+  const intensity = Math.min(Math.abs(val) / 20, 1);
+  const hue = val >= 0 ? 120 : 0;
+  const s = Math.round(35 + intensity * 45);
+  const l = Math.round(97 - intensity * 55);
+  return { bg: `hsl(${hue},${s}%,${l}%)`, dark: false };
 }
 function absColor(val, maxVal) {
   if (!val || !maxVal) return null;
   const intensity = Math.min(val / maxVal, 1);
-  const s = Math.round(8 + intensity * 72);
-  const l = Math.round(94 - intensity * 54);
-  return { bg: `hsl(142,${s}%,${l}%)`, dark: intensity > 0.35 };
+  const s = Math.round(35 + intensity * 45);
+  const l = Math.round(97 - intensity * 55);
+  return { bg: `hsl(120,${s}%,${l}%)`, dark: false };
 }
 
 // ═══════════════════════════════════════════════════════════════

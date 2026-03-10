@@ -635,15 +635,11 @@ function changeColor(val) {
 }
 function absColor(val, minVal, maxVal) {
   if (!val) return null;
-  if (maxVal === minVal) return { bg: 'hsl(0,0%,97%)', dark: false };
-  const mid = (minVal + maxVal) / 2;
-  const range = (maxVal - minVal) / 2;
-  const centered = (val - mid) / range;
-  const intensity = Math.min(Math.abs(centered), 1);
-  const hue = centered >= 0 ? 120 : 0;
+  if (maxVal === minVal) return { bg: 'hsl(0,0%,100%)', dark: false };
+  const intensity = Math.min((val - minVal) / (maxVal - minVal), 1);
   const s = Math.round(35 + intensity * 45);
-  const l = Math.round(97 - intensity * 55);
-  return { bg: `hsl(${hue},${s}%,${l}%)`, dark: false };
+  const l = Math.round(100 - intensity * 58);
+  return { bg: `hsl(120,${s}%,${l}%)`, dark: intensity > 0.6 };
 }
 
 // ═══════════════════════════════════════════════════════════════

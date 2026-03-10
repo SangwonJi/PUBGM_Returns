@@ -633,12 +633,17 @@ function changeColor(val) {
   const l = Math.round(97 - intensity * 55);
   return { bg: `hsl(${hue},${s}%,${l}%)`, dark: false };
 }
-function absColor(val, maxVal) {
-  if (!val || !maxVal) return null;
-  const intensity = Math.min(val / maxVal, 1);
+function absColor(val, minVal, maxVal) {
+  if (!val) return null;
+  if (maxVal === minVal) return { bg: 'hsl(0,0%,97%)', dark: false };
+  const mid = (minVal + maxVal) / 2;
+  const range = (maxVal - minVal) / 2;
+  const centered = (val - mid) / range;
+  const intensity = Math.min(Math.abs(centered), 1);
+  const hue = centered >= 0 ? 120 : 0;
   const s = Math.round(35 + intensity * 45);
   const l = Math.round(97 - intensity * 55);
-  return { bg: `hsl(120,${s}%,${l}%)`, dark: false };
+  return { bg: `hsl(${hue},${s}%,${l}%)`, dark: false };
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -721,9 +726,9 @@ function addAvgMedRows(tbody, cols, colData) {
   });
 }
 
-function makeCell(td, abs, chg, label, maxAbs) {
+function makeCell(td, abs, chg, label, maxAbs, minAbs) {
   if (!abs) { td.className = 'td-empty'; return null; }
-  const color = G.mode === 'change' ? changeColor(chg) : absColor(abs, maxAbs);
+  const color = G.mode === 'change' ? changeColor(chg) : absColor(abs, minAbs || 0, maxAbs);
   const txt = G.mode === 'change'
     ? (chg !== null ? fmtChg(chg) : '—')
     : fmtNum(abs);
@@ -750,6 +755,7 @@ function renderQuarterly() {
 
   const allAbs = Object.values(data).filter(Boolean);
   const maxAbs = Math.max(...allAbs, 1);
+  const minAbs = allAbs.length ? Math.min(...allAbs) : 0;
   const chgMap = buildChgMap(data, Object.keys(data).sort());
 
   const thead = tbl.createTHead();
@@ -768,7 +774,7 @@ function renderQuarterly() {
     [1, 2, 3, 4].forEach(q => {
       const td = tr.insertCell();
       const key = `${y}-Q${q}`;
-      const v = makeCell(td, data[key], chgMap[key] !== undefined ? chgMap[key] : null, `${y} Q${q}`, maxAbs);
+      const v = makeCell(td, data[key], chgMap[key] !== undefined ? chgMap[key] : null, `${y} Q${q}`, maxAbs, minAbs);
       if (v !== null) colData[q].push(v);
     });
   });
@@ -787,6 +793,7 @@ function renderMonthly() {
 
   const allAbs = Object.values(data).filter(Boolean);
   const maxAbs = Math.max(...allAbs, 1);
+  const minAbs = allAbs.length ? Math.min(...allAbs) : 0;
   const chgMap = buildChgMap(data, Object.keys(data).sort());
 
   const thead = tbl.createTHead();
@@ -807,7 +814,7 @@ function renderMonthly() {
       const td = tr.insertCell();
       const key = `${y}-${String(mo).padStart(2, '0')}`;
       const label = `${y} ${T[LANG].months_long[mo - 1]}`;
-      const v = makeCell(td, data[key], chgMap[key] !== undefined ? chgMap[key] : null, label, maxAbs);
+      const v = makeCell(td, data[key], chgMap[key] !== undefined ? chgMap[key] : null, label, maxAbs, minAbs);
       if (v !== null) colData[mo].push(v);
     }
   });
@@ -836,6 +843,7 @@ function renderWeekly() {
 
   const allAbs = Object.values(data).filter(Boolean);
   const maxAbs = Math.max(...allAbs, 1);
+  const minAbs = allAbs.length ? Math.min(...allAbs) : 0;
 
   const chgGrid = {}, absGrid = {};
   G.years.forEach(y => {
@@ -871,7 +879,7 @@ function renderWeekly() {
     cols.forEach(w => {
       const td = tr.insertCell();
       const label = LANG === 'ko' ? `${y}년 ${weekLabel(w)}` : `${y} Week ${w}`;
-      const v = makeCell(td, absGrid[y][w], chgGrid[y][w], label, maxAbs);
+      const v = makeCell(td, absGrid[y][w], chgGrid[y][w], label, maxAbs, minAbs);
       if (v !== null) colData[w].push(v);
     });
   });
@@ -900,6 +908,7 @@ function renderDaily(month) {
   const monthKeys = Object.keys(data).filter(k => k.includes(`-${mm}-`));
   const allAbs = monthKeys.map(k => data[k]).filter(Boolean);
   const maxAbs = Math.max(...allAbs, 1);
+  const minAbs = allAbs.length ? Math.min(...allAbs) : 0;
 
   const chgGrid = {}, absGrid = {};
   G.years.forEach(y => {
@@ -942,7 +951,7 @@ function renderDaily(month) {
       const label = LANG === 'ko'
         ? `${y}년 ${ML[month - 1]} ${d}일`
         : `${y} ${ML[month - 1]} ${d}`;
-      const v = makeCell(td, absGrid[y][d], chgGrid[y][d], label, maxAbs);
+      const v = makeCell(td, absGrid[y][d], chgGrid[y][d], label, maxAbs, minAbs);
       if (v !== null) colData[d].push(v);
     });
   });

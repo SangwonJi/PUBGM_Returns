@@ -62,6 +62,7 @@
 
     .tab-panel{display:none;padding:18px 28px 40px;}
     .tab-panel.active{display:block;}
+    .heatmap-country-label{font-size:0.95rem;font-weight:700;color:var(--text);padding:6px 4px 10px;letter-spacing:0.02em;}
 
     /* ── CONTROLS ── */
     .ctrl-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
@@ -359,22 +360,22 @@
       <span class="ctrl-label" data-i18n="ctrl_month">Month</span>
       <select id="sel-month"></select>
     </div>
-    <div class="tbl-wrap"><table id="tbl-daily"></table></div>
+    <div class="tbl-wrap"><div class="heatmap-country-label" id="hm-label-daily"></div><table id="tbl-daily"></table></div>
   </div>
 
   <!-- WEEKLY -->
   <div class="tab-panel" id="tab-weekly">
-    <div class="tbl-wrap"><table id="tbl-weekly"></table></div>
+    <div class="tbl-wrap"><div class="heatmap-country-label" id="hm-label-weekly"></div><table id="tbl-weekly"></table></div>
   </div>
 
   <!-- MONTHLY -->
   <div class="tab-panel" id="tab-monthly">
-    <div class="tbl-wrap"><table id="tbl-monthly"></table></div>
+    <div class="tbl-wrap"><div class="heatmap-country-label" id="hm-label-monthly"></div><table id="tbl-monthly"></table></div>
   </div>
 
   <!-- QUARTERLY -->
   <div class="tab-panel" id="tab-quarterly">
-    <div class="tbl-wrap"><table id="tbl-quarterly"></table></div>
+    <div class="tbl-wrap"><div class="heatmap-country-label" id="hm-label-quarterly"></div><table id="tbl-quarterly"></table></div>
   </div>
 
   <!-- MAP -->
@@ -1986,7 +1987,19 @@ document.getElementById('tl-play-btn').addEventListener('click', function() {
 // ═══════════════════════════════════════════════════════════════
 //  RENDER ALL
 // ═══════════════════════════════════════════════════════════════
+function updateHeatmapLabels() {
+  const c = getCountry();
+  const label = c ? c : (LANG === 'ko' ? '글로벌 (전체)' : 'Global (All Countries)');
+  const mode = G.mode === 'change' ? '% Change' : 'Absolute DAU';
+  const text = `${label}  ·  ${mode}`;
+  document.getElementById('hm-label-daily').textContent = text;
+  document.getElementById('hm-label-weekly').textContent = text;
+  document.getElementById('hm-label-monthly').textContent = text;
+  document.getElementById('hm-label-quarterly').textContent = text;
+}
+
 function renderAll() {
+  updateHeatmapLabels();
   renderQuarterly();
   renderMonthly();
   renderWeekly();
